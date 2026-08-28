@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FCS Lab — Food Culture and Society Laboratory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  :root{
+    --ink:#1c1a17;
+    --paper:#e7e1d3;
+    --paper-light:#f2eee4;
+    --paper-deep:#dcd5c3;
+    --doenjang:#74472b;
+    --doenjang-deep:#4f2f1b;
+    --celadon:#6e8974;
+    --celadon-deep:#485c4d;
+    --seal:#a73a2b;
+    --seal-deep:#7c2a1f;
+    --tidal:#4f6d7a;
+    --tidal-deep:#33474f;
+    --grain:#b8901f;
+    --grain-deep:#836615;
+    --line: rgba(28,26,23,0.14);
+    --line-dark: rgba(242,238,228,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4,.serif{
+    font-family:'Noto Serif KR',serif;
+    margin:0;
+    font-weight:700;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px;}
+  section[id]{scroll-margin-top:88px;}
+  [id]{scroll-margin-top:88px;}
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:100;
+    background:rgba(231,225,211,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:64px;
+  }
+  .brandmark{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Noto Serif KR',serif;font-weight:700;font-size:16px;letter-spacing:0.04em;
+  }
+  .brandmark .dot{
+    width:22px;height:22px;border-radius:4px;background:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--paper-light);font-size:10px;font-weight:700;font-family:'Noto Serif KR',serif;
+  }
+  .topnav{display:flex;gap:6px;align-items:center;}
+  .nav-item{position:relative;}
+  .nav-trigger{
+    background:none;border:none;cursor:pointer;
+    font-family:inherit;
+    font-size:13px;font-weight:700;letter-spacing:0.12em;
+    color:var(--ink);opacity:0.72;
+    padding:10px 14px;
+    display:flex;align-items:center;gap:5px;
+    transition:opacity .2s;
+  }
+  .nav-trigger:hover, .nav-trigger[aria-expanded="true"]{opacity:1;}
+  .nav-trigger .chev{font-size:9px;transition:transform .2s;opacity:0.7;}
+  .nav-trigger[aria-expanded="true"] .chev{transform:rotate(180deg);}
+  .nav-link{
+    font-size:13px;font-weight:700;letter-spacing:0.12em;
+    color:var(--ink);opacity:0.72;
+    padding:10px 14px;display:inline-block;
+    transition:opacity .2s;
+  }
+  .nav-link:hover{opacity:1;}
+  .nav-link.insight{position:relative;}
+  .nav-link.insight::after{
+    content:"";position:absolute;left:14px;right:14px;bottom:6px;height:2px;
+    background:linear-gradient(90deg,var(--doenjang) 0 33%,var(--celadon) 33% 66%,var(--seal) 66% 100%);
+  }
+  .wip-badge{
+    display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.04em;
+    background:var(--seal);color:var(--paper-light);
+    padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle;
+    transform:translateY(-1px);
+  }
+  .wip-banner{
+    max-width:640px;margin:26px auto 0;text-align:center;
+    font-size:13px;line-height:1.7;color:var(--paper-light);opacity:0.75;
+    border:1px dashed var(--line-dark);border-radius:6px;padding:14px 20px;
+  }
+  .wip-banner b{opacity:1;}
+  .dropdown{
+    position:absolute;top:100%;left:0;
+    min-width:190px;
+    background:var(--paper-light);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:8px;
+    display:none;
+    flex-direction:column;
+    box-shadow:0 10px 24px rgba(28,26,23,0.12);
+  }
+  .nav-item.open .dropdown{display:flex;}
+  .dropdown a{
+    font-size:13px;padding:9px 12px;border-radius:2px;
+    color:var(--ink);opacity:0.78;
+  }
+  .dropdown a:hover{background:var(--paper-deep);opacity:1;}
+
+  .menu-toggle{display:none;background:none;border:1px solid var(--ink);border-radius:2px;padding:8px 10px;cursor:pointer;font-size:13px;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:110px 0 90px;
+    overflow:hidden;
+    text-align:center;
+  }
+  .hero-jar{
+    position:absolute;
+    left:50%; top:38%;
+    transform:translate(-50%,-50%);
+    width:560px; max-width:80vw;
+    opacity:0.07;
+    pointer-events:none;
+  }
+  .hero-inner{position:relative;z-index:1;}
+  .eyebrow-kr{
+    font-size:14px;color:var(--doenjang-deep);letter-spacing:0.3em;
+    margin-bottom:18px;font-weight:500;
+  }
+  .hero h1{
+    font-size:clamp(48px,8vw,88px);
+    letter-spacing:0.02em;
+    line-height:1;
+    color:var(--ink);
+  }
+  .hero .sub{
+    margin-top:18px;
+    font-size:18px;
+    font-family:'Noto Serif KR',serif;
+    font-weight:500;
+    color:var(--ink);
+    opacity:0.75;
+  }
+  .hero .tagline{
+    margin-top:34px;
+    font-size:clamp(17px,2.4vw,22px);
+    font-weight:500;
+    line-height:1.6;
+  }
+  .tagline .t-food{color:var(--doenjang-deep);}
+  .tagline .t-culture{color:var(--celadon-deep);}
+  .tagline .t-society{color:var(--seal-deep);}
+
+  .cta-row{
+    margin-top:48px;
+    display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
+  }
+  .cta{
+    padding:14px 30px;
+    border:1px solid var(--ink);
+    border-radius:2px;
+    font-size:13px;font-weight:700;letter-spacing:0.18em;
+    background:transparent;
+    transition:background .25s, color .25s, transform .15s;
+  }
+  .cta:hover{background:var(--ink);color:var(--paper-light);}
+  .cta:active{transform:scale(0.97);}
+  .cta.primary{background:var(--seal);color:var(--paper-light);border-color:var(--seal);}
+  .cta.primary:hover{background:var(--seal-deep);border-color:var(--seal-deep);}
+
+  /* ---------- section heads ---------- */
+  .section-head{padding:76px 0 8px;text-align:center;}
+  .section-head .kicker{font-size:13px;letter-spacing:0.3em;opacity:0.6;font-weight:500;}
+  .section-head h2{font-size:clamp(28px,4vw,40px);margin-top:14px;}
+  .section-head p.lede{max-width:520px;margin:16px auto 0;font-size:15px;line-height:1.7;opacity:0.68;}
+
+  /* ---------- about ---------- */
+  .about-intro{
+    padding:60px 0 90px;
+    border-bottom:1px solid var(--line);
+    background:var(--paper-light);
+  }
+  .about-intro .wrap{max-width:760px;text-align:center;}
+  .stamp{
+    width:40px;height:40px;margin:0 auto 26px;
+    border-radius:4px;background:var(--seal);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--paper-light);font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;
+    transform:rotate(-3deg);
+  }
+  .about-intro p{
+    font-size:19px;line-height:1.85;
+    font-family:'Noto Serif KR',serif;
+    font-weight:500;
+  }
+  .about-intro p.en{
+    margin-top:16px;
+    font-family:'Pretendard',sans-serif;
+    font-size:15px;font-weight:400;
+    color:var(--ink);opacity:0.62;line-height:1.7;
+  }
+
+  .subsection{
+    padding:70px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .subsection:nth-child(even){background:var(--paper-light);}
+  .subsection-grid{
+    display:grid;grid-template-columns:220px 1fr;gap:48px;
+  }
+  .subsection-label{
+    font-size:12px;letter-spacing:0.22em;font-weight:700;opacity:0.55;
+  }
+  .subsection-grid h3{font-size:26px;margin-top:8px;}
+
+  .director-card{display:flex;gap:22px;align-items:flex-start;}
+  .avatar{
+    flex:none;width:76px;height:76px;border-radius:50%;
+    background:var(--doenjang);color:var(--paper-light);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;
+  }
+  .director-card .name{font-size:20px;font-weight:700;font-family:'Noto Serif KR',serif;}
+  .director-card .name .en{font-size:13px;font-weight:500;opacity:0.55;margin-left:8px;font-family:'Pretendard',sans-serif;}
+  .director-card .role{font-size:13px;opacity:0.6;margin-top:4px;}
+  .director-card .bio{font-size:15px;line-height:1.75;opacity:0.75;margin-top:14px;max-width:540px;}
+  .director-edu{
+    margin-top:16px;display:flex;flex-direction:column;gap:4px;
+    font-size:13px;opacity:0.6;
+  }
+  .director-edu span{opacity:0.4;margin-right:4px;}
+  .director-links{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;}
+  .director-links a{
+    font-size:12px;font-weight:700;letter-spacing:0.04em;
+    padding:7px 14px;border:1px solid var(--line);border-radius:20px;
+    opacity:0.75;transition:opacity .2s,border-color .2s;
+  }
+  .director-links a:hover{opacity:1;border-color:var(--ink);}
+  .director-note{margin-top:18px;font-size:12px;opacity:0.45;}
+
+  .member-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:20px;}
+  .member{text-align:center;}
+  .member .avatar{width:56px;height:56px;font-size:15px;margin:0 auto 10px;background:var(--celadon);}
+  .member .mname{font-size:13px;font-weight:700;}
+  .member .mrole{font-size:12px;opacity:0.55;margin-top:2px;}
+  .note{font-size:13px;opacity:0.5;margin-top:24px;}
+
+  .collab-list{display:flex;flex-wrap:wrap;gap:12px;}
+  .collab-chip{
+    padding:10px 18px;border:1px solid var(--line);border-radius:2px;
+    font-size:13px;font-weight:500;opacity:0.75;
+  }
+
+  /* ---------- research pillars (existing pattern) ---------- */
+  .pillar{
+    border-bottom:1px solid var(--line);
+    padding:70px 0;
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .pillar.visible{opacity:1;transform:translateY(0);}
+  .pillar:nth-child(odd){background:var(--paper-light);}
+
+  .pillar-grid{display:grid;grid-template-columns:300px 1fr;gap:56px;}
+  .pillar-head{display:flex; gap:18px; align-items:flex-start;}
+  .seal{
+    flex:none;width:52px;height:52px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Noto Serif KR',serif;font-size:24px;font-weight:700;
+    color:var(--paper-light);transform:rotate(-2deg);
+  }
+  .pillar[data-axis="food"] .seal{background:var(--doenjang);}
+  .pillar[data-axis="culture"] .seal{background:var(--celadon);}
+  .pillar[data-axis="society"] .seal{background:var(--seal);}
+  .pillar-head-text .en{font-size:12px;letter-spacing:0.22em;font-weight:700;opacity:0.55;}
+  .pillar-head-text h3{font-size:32px;margin-top:6px;}
+  .pillar-desc{margin-top:18px;font-size:15px;line-height:1.75;opacity:0.75;max-width:280px;}
+
+  .item-list{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;}
+  .item{padding:20px 0;border-bottom:1px solid var(--line);}
+  .item:nth-last-child(-n+2){border-bottom:none;}
+  .item .name{font-size:17px;font-weight:700;font-family:'Noto Serif KR',serif;display:flex;align-items:center;gap:10px;}
+  .item .name::before{content:"";width:6px;height:6px;border-radius:50%;display:inline-block;}
+  .pillar[data-axis="food"] .item .name::before{background:var(--doenjang);}
+  .pillar[data-axis="culture"] .item .name::before{background:var(--celadon);}
+  .pillar[data-axis="society"] .item .name::before{background:var(--seal);}
+  .item .desc{margin-top:6px;font-size:14px;line-height:1.65;opacity:0.68;padding-left:16px;}
+
+  /* ---------- projects & publications ---------- */
+  .proj-list{display:flex;flex-direction:column;gap:0;}
+  .proj{
+    display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;
+    padding:22px 0;border-bottom:1px solid var(--line);
+  }
+  .proj:last-child{border-bottom:none;}
+  .proj .ptitle{font-size:16px;font-weight:700;font-family:'Noto Serif KR',serif;}
+  .proj .pdesc{font-size:13px;opacity:0.62;margin-top:5px;}
+  .tag{font-size:11px;font-weight:700;letter-spacing:0.08em;padding:6px 12px;border-radius:20px;white-space:nowrap;}
+  .tag.ongoing{background:var(--celadon);color:var(--paper-light);}
+  .tag.upcoming{background:var(--paper-deep);color:var(--ink);opacity:0.75;}
+
+  .pub-list{display:flex;flex-direction:column;}
+  .pub{padding:24px 0;border-bottom:1px solid var(--line);}
+  .pub:last-child{border-bottom:none;}
+  .pub-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .pub .pyear{
+    flex:none;font-family:'Noto Serif KR',serif;font-weight:700;font-size:15px;
+    color:var(--paper-light);background:var(--doenjang);
+    padding:2px 10px;border-radius:20px;
+  }
+  .pub .ptitle2{font-size:16px;font-weight:700;font-family:'Noto Serif KR',serif;line-height:1.5;}
+  .pub .pmeta{font-size:13px;opacity:0.62;margin-top:6px;line-height:1.6;}
+  .pub .pmeta .pauthors{opacity:0.85;}
+  .pub .pmeta em{font-style:italic;}
+  .pub .pbadge{
+    margin-left:6px;font-size:10px;font-weight:700;letter-spacing:0.06em;
+    color:var(--celadon-deep);border:1px solid var(--celadon);
+    padding:2px 8px;border-radius:20px;
+  }
+  .pub-links{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;}
+  .pub-links a{
+    font-size:12px;font-weight:700;letter-spacing:0.04em;
+    padding:7px 14px;border:1px solid var(--line);border-radius:20px;
+    opacity:0.75;transition:opacity .2s,border-color .2s;
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .pub-links a:hover{opacity:1;border-color:var(--ink);}
+  .pub-links a.scholar::before{content:"🎓";font-size:12px;}
+  .pub-links a.riss::before{content:"📚";font-size:12px;}
+  .pub-source-note{margin-top:28px;font-size:12px;opacity:0.5;line-height:1.7;}
+  .pub-source-note a{border-bottom:1px solid currentColor;opacity:0.8;}
+
+  /* ---------- FCS Database ---------- */
+  .database{background:var(--paper-light);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .db-explainer{display:flex;justify-content:center;margin:20px 0 10px;}
+  .db-explainer svg{width:100%;max-width:420px;height:auto;}
+  .db-node-label{font-size:11px;font-weight:700;fill:var(--ink);opacity:0.6;font-family:'Pretendard',sans-serif;}
+  .db-center-label{font-family:'Noto Serif KR',serif;font-weight:700;font-size:16px;fill:var(--paper-light);}
+
+  .db-search-row{max-width:420px;margin:36px auto 0;}
+  .db-search{
+    width:100%;padding:14px 18px;
+    border:1px solid var(--ink);border-radius:30px;
+    background:var(--paper);font-family:inherit;font-size:14px;color:var(--ink);
+    outline:none;
+  }
+  .db-search::placeholder{opacity:0.5;}
+
+  .db-count{text-align:center;font-size:12px;opacity:0.5;margin-top:14px;}
+
+  .food-grid{
+    margin-top:34px;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;
+  }
+  .food-card{
+    background:var(--paper);border:1px solid var(--line);border-radius:6px;
+    padding:24px 20px;cursor:pointer;text-align:left;
+    display:flex;flex-direction:column;gap:10px;
+    transition:border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .food-card:hover{border-color:var(--ink);transform:translateY(-3px);box-shadow:0 10px 20px rgba(28,26,23,0.08);}
+  .food-card.active{border-color:var(--seal);background:var(--paper-light);}
+  .food-card .fseal{
+    width:36px;height:36px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Noto Serif KR',serif;font-weight:700;font-size:16px;color:var(--paper-light);
+  }
+  .food-card .fname{font-family:'Noto Serif KR',serif;font-size:19px;font-weight:700;}
+  .food-card .fname .fen{font-size:12px;font-weight:500;opacity:0.5;margin-left:6px;font-family:'Pretendard',sans-serif;}
+  .food-card .ftagline{font-size:13px;opacity:0.6;line-height:1.6;}
+
+  .food-empty{
+    grid-column:1/-1;text-align:center;padding:50px 20px;opacity:0.5;font-size:14px;
+  }
+  .food-placeholder{
+    border:1px dashed var(--line);border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;opacity:0.4;padding:24px;text-align:center;line-height:1.6;
+  }
+
+  .food-detail{
+    margin-top:44px;
+    background:var(--paper);border:1px solid var(--line);border-radius:8px;
+    padding:40px;
+    display:none;
+  }
+  .food-detail.open{display:block;}
+  .fd-head{display:flex;align-items:center;gap:18px;padding-bottom:26px;border-bottom:1px solid var(--line);}
+  .fd-head .fseal{width:52px;height:52px;font-size:22px;flex:none;}
+  .fd-head h3{font-size:28px;}
+  .fd-head .fen{font-size:13px;opacity:0.55;margin-top:4px;}
+  .fd-close{
+    margin-left:auto;background:none;border:1px solid var(--line);border-radius:20px;
+    padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;opacity:0.6;
+  }
+  .fd-close:hover{opacity:1;border-color:var(--ink);}
+
+  .fd-grid{margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:0 40px;}
+  .fd-row{padding:18px 0;border-bottom:1px solid var(--line);}
+  .fd-row .fd-label{
+    font-size:11px;font-weight:700;letter-spacing:0.14em;opacity:0.45;
+  }
+  .fd-row .fd-value{margin-top:8px;font-size:14px;line-height:1.75;opacity:0.85;}
+  .fd-row .fd-value a{border-bottom:1px solid var(--line);opacity:0.85;}
+  .fd-row .fd-value a:hover{border-color:var(--ink);opacity:1;}
+  .fd-row.wide{grid-column:1/-1;}
+
+  .db-note{margin-top:30px;font-size:12px;opacity:0.45;text-align:center;line-height:1.7;}
+
+  @media (max-width:820px){
+    .fd-grid{grid-template-columns:1fr;}
+    .fd-row.wide{grid-column:auto;}
+  }
+
+  /* ---------- FCS Insight (inverted brand block) ---------- */
+  .insight{
+    background:var(--ink);color:var(--paper-light);
+    padding:90px 0 100px;
+  }
+  .insight .section-head .kicker{color:var(--seal);opacity:0.9;}
+  .insight .section-head p.lede{color:var(--paper-light);opacity:0.6;}
+  .insight-list{margin-top:50px;display:flex;flex-direction:column;}
+  .insight-row{
+    display:grid;grid-template-columns:90px 1fr auto;gap:24px;align-items:center;
+    padding:28px 0;border-bottom:1px solid var(--line-dark);
+    transition:padding-left .25s;
+  }
+  .insight-row:hover{padding-left:10px;}
+  .insight-row:last-child{border-bottom:none;}
+  .insight-num{font-family:'Noto Serif KR',serif;font-size:26px;color:var(--seal);font-weight:700;}
+  .insight-title{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;}
+  .insight-teaser{font-size:13px;opacity:0.55;margin-top:6px;}
+  .insight-read{
+    font-size:12px;letter-spacing:0.14em;font-weight:700;
+    opacity:0;transition:opacity .25s;
+    border-bottom:1px solid var(--paper-light);padding-bottom:2px;
+  }
+  .insight-row:hover .insight-read{opacity:0.85;}
+
+  .insight-origin{
+    margin:-8px 0 8px 114px;
+    font-size:12px;
+    padding:10px 14px;
+    background:rgba(242,238,228,0.06);
+    border-left:2px solid var(--seal);
+    opacity:0.7;
+    line-height:1.6;
+  }
+  .insight-origin b{opacity:0.95;font-weight:700;}
+
+  .insight-row{cursor:pointer;background:none;border:none;width:100%;text-align:left;color:inherit;font:inherit;}
+  .insight-row.active{padding-left:10px;background:rgba(242,238,228,0.04);}
+  .insight-row.active .insight-num{color:var(--paper-light);}
+
+  .insight-detail{
+    display:none;margin-top:20px;
+    background:rgba(242,238,228,0.05);
+    border:1px solid var(--line-dark);border-radius:4px;
+    padding:40px;
+  }
+  .insight-detail.open{display:block;}
+  .insight-detail .id-head{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    padding-bottom:22px;border-bottom:1px solid var(--line-dark);
+  }
+  .insight-detail .id-num{font-family:'Noto Serif KR',serif;font-size:15px;color:var(--seal);font-weight:700;letter-spacing:0.06em;}
+  .insight-detail h3{font-size:26px;margin-top:8px;line-height:1.4;}
+  .insight-detail .id-close{
+    flex:none;background:none;border:1px solid var(--line-dark);border-radius:2px;
+    color:var(--paper-light);padding:8px 14px;font-size:12px;cursor:pointer;opacity:0.7;
+    transition:opacity .2s, border-color .2s;
+  }
+  .insight-detail .id-close:hover{opacity:1;border-color:rgba(242,238,228,0.6);}
+  .insight-detail .id-body{margin-top:26px;font-size:15px;line-height:1.9;opacity:0.88;}
+  .insight-detail .id-body p{margin:0 0 18px;}
+  .insight-detail .id-body strong{color:var(--seal);}
+  .insight-detail .id-nav{
+    margin-top:30px;padding-top:22px;border-top:1px solid var(--line-dark);
+    display:flex;justify-content:space-between;font-size:12px;letter-spacing:0.08em;
+  }
+  .insight-detail .id-nav span{cursor:pointer;opacity:0.65;transition:opacity .2s;}
+  .insight-detail .id-nav span:hover{opacity:1;}
+  .insight-detail .id-nav span.disabled{opacity:0.2;cursor:default;pointer-events:none;}
+
+  .picks-head{margin-top:90px;padding-top:60px;border-top:1px solid var(--line-dark);}
+  .picks-head .eyebrow{font-size:12px;letter-spacing:0.2em;color:var(--seal);font-weight:700;}
+  .picks-head h3{font-family:'Noto Serif KR',serif;font-size:24px;margin-top:10px;}
+  .picks-head p{font-size:13px;opacity:0.55;margin-top:10px;max-width:480px;line-height:1.7;}
+
+  .picks-list{margin-top:36px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;}
+  .pick-card{
+    background:rgba(242,238,228,0.04);
+    border:1px solid var(--line-dark);
+    border-radius:4px;
+    padding:22px;
+    display:flex;flex-direction:column;gap:12px;
+    transition:border-color .2s, background .2s;
+  }
+  .pick-card:hover{border-color:rgba(242,238,228,0.35);background:rgba(242,238,228,0.07);}
+  .pick-axis{
+    align-self:flex-start;
+    font-size:10px;font-weight:700;letter-spacing:0.08em;
+    padding:4px 10px;border-radius:20px;
+    color:var(--ink);
+  }
+  .pick-axis.food{background:#c99a72;}
+  .pick-axis.culture{background:#a8c2af;}
+  .pick-axis.society{background:#e0a99c;}
+  .pick-axis.column{background:rgba(242,238,228,0.18);color:var(--paper-light);}
+  .pick-title{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:700;line-height:1.5;}
+  .pick-note{font-size:13px;opacity:0.65;line-height:1.7;}
+  .pick-note::before{content:"“";opacity:0.5;}
+  .pick-note::after{content:"”";opacity:0.5;}
+  .pick-meta{display:flex;justify-content:space-between;align-items:center;margin-top:auto;font-size:11px;opacity:0.45;}
+  .pick-link{font-size:11px;font-weight:700;letter-spacing:0.04em;opacity:0.7;border-bottom:1px solid rgba(242,238,228,0.4);padding-bottom:2px;}
+  .pick-card:hover .pick-link{opacity:1;}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line-dark);
+    padding:70px 0 40px;
+    background:var(--ink);
+    color:var(--paper-light);
+  }
+  footer .wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;}
+  footer .fbrand{font-family:'Noto Serif KR',serif;font-size:26px;font-weight:700;}
+  footer .ftag{font-size:14px;opacity:0.65;max-width:420px;line-height:1.6;}
+  footer .fcontact{margin-top:8px;display:flex;gap:26px;flex-wrap:wrap;justify-content:center;}
+  footer .fcontact a{font-size:13px;letter-spacing:0.08em;opacity:0.8;border-bottom:1px solid rgba(242,238,228,0.3);padding-bottom:2px;}
+  footer .fcontact a:hover{opacity:1;border-color:rgba(242,238,228,0.8);}
+  footer .fyear{margin-top:30px;font-size:12px;opacity:0.4;}
+
+  @media (max-width:820px){
+    .pillar-grid, .subsection-grid{grid-template-columns:1fr;gap:22px;}
+    .item-list{grid-template-columns:1fr;}
+    .item:nth-last-child(-n+2){border-bottom:1px solid var(--line);}
+    .item:last-child{border-bottom:none;}
+    .hero{padding:90px 0 70px;}
+    .menu-toggle{display:inline-flex;}
+    .topnav{
+      position:absolute;top:64px;left:0;right:0;
+      background:var(--paper-light);
+      flex-direction:column;align-items:stretch;
+      border-bottom:1px solid var(--line);
+      display:none;padding:10px 16px 20px;
+      gap:0;
+    }
+    .topnav.open{display:flex;}
+    .nav-item{width:100%;}
+    .nav-trigger, .nav-link{width:100%;justify-content:space-between;padding:14px 6px;}
+    .dropdown{position:static;border:none;box-shadow:none;padding:0 0 6px 12px;}
+    .insight-row{grid-template-columns:50px 1fr;}
+    .insight-read{display:none;}
+    .insight-origin{margin-left:0;}
+    .picks-list{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .pillar{transition:none;opacity:1;transform:none;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brandmark"><span class="dot">FCS</span> FCS LAB</div>
+    <button class="menu-toggle" id="menuToggle" aria-label="메뉴 열기" aria-expanded="false">MENU</button>
+    <nav class="topnav" id="topnav">
+      <div class="nav-item" data-name="about">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">ABOUT <span class="chev">▾</span></button>
+        <div class="dropdown">
+          <a href="#about-intro">FCS Lab</a>
+          <a href="#vision">Vision</a>
+          <a href="#director">Director</a>
+          <a href="#members">Members</a>
+          <a href="#collaborators">Collaborators</a>
+        </div>
+      </div>
+      <div class="nav-item" data-name="research">
+        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">RESEARCH <span class="chev">▾</span></button>
+        <div class="dropdown">
+          <a href="#food">Food</a>
+          <a href="#culture">Culture</a>
+          <a href="#society">Society</a>
+          <a href="#projects">Current Projects</a>
+          <a href="#publications">Publications</a>
+        </div>
+      </div>
+      <a class="nav-link" href="#database">DATABASE</a>
+      <a class="nav-link insight" href="#insight">FCS INSIGHT</a>
+      <a class="nav-link" href="#contact">CONTACT</a>
+    </nav>
+  </div>
+</div>
+
+<section class="hero">
+  <svg class="hero-jar" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="100" cy="18" rx="20" ry="6" fill="none" stroke="#1c1a17" stroke-width="2"/>
+    <path d="M100,20 C80,20 70,30 68,45 C65,60 40,65 30,90 C15,120 10,150 15,175 C20,205 40,225 65,235 C80,242 120,242 135,235 C160,225 180,205 185,175 C190,150 185,120 170,90 C160,65 135,60 132,45 C130,30 120,20 100,20 Z" fill="none" stroke="#1c1a17" stroke-width="2"/>
+    <path d="M35,120 C70,132 130,132 165,120" fill="none" stroke="#1c1a17" stroke-width="1.4"/>
+  </svg>
+  <div class="wrap hero-inner">
+    <div class="eyebrow-kr">푸드 · 컬처 · 소사이어티</div>
+    <h1>FCS LAB</h1>
+    <div class="sub">Food Culture and Society Laboratory</div>
+    <p class="tagline">
+      <span class="t-food">Understanding Food</span>, <span class="t-culture">Connecting Culture</span>, <span class="t-society">Shaping Society.</span>
+    </p>
+    <div class="cta-row">
+      <a class="cta" href="#about">ABOUT</a>
+      <a class="cta" href="#research">RESEARCH</a>
+      <a class="cta primary" href="#insight">FCS INSIGHT</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section id="about">
+  <div class="about-intro" id="about-intro">
+    <div class="wrap">
+      <div class="stamp">FCS</div>
+      <p>음식은 재료이자 기억이며, 산업이자 미래입니다.<br>FCS Lab은 이 세 겹의 층위를 하나의 질문으로 엮습니다 — 우리는 무엇을, 왜, 어떻게 먹는가.</p>
+      <p class="en">FCS Lab studies food as material, meaning, and system — bridging food science, cultural heritage, and the industries that shape what ends up on the table.</p>
+    </div>
+  </div>
+
+  <div class="subsection" id="vision">
+    <div class="wrap subsection-grid">
+      <div class="subsection-label">VISION</div>
+      <div>
+        <h3>과학과 인문학이 만나는 지점</h3>
+        <p class="director-card bio" style="margin-top:16px;max-width:640px;">우리는 음식을 통해 과학과 인문학, 산업이 만나는 지점을 연구합니다. 음식은 개인의 취향을 넘어 한 사회를 비추는 거울이라는 믿음이 FCS Lab의 출발점입니다. 발효 미생물의 화학 반응부터 장문화의 역사, 지속가능한 식품 산업의 미래까지 — 하나의 질문 아래 서로 다른 시선을 잇습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection" id="director">
+    <div class="wrap subsection-grid">
+      <div class="subsection-label">DIRECTOR</div>
+      <div class="director-card">
+        <div class="avatar">CC</div>
+        <div>
+          <div class="name">정장호 교수<span class="en">Chang-Ho Chung, Ph.D.</span></div>
+          <div class="role">FCS Lab Director · 세종대학교 조리외식경영학과 교수</div>
+          <p class="bio">미국 루이지애나주립대학교(Louisiana State University)에서 식품과학 박사학위를 받았으며, 발효식품의 미생물 생태와 품질 특성을 전문적으로 연구합니다. 김치·장류 등 한국 전통 발효식품의 과학적 원리를 규명하고, 이를 새로운 식품 개발로 확장하는 연구를 이어오고 있습니다.</p>
+          <div class="director-edu">
+            <div><span>PhD</span>Louisiana State University, 2002</div>
+            <div><span>MS</span>Sejong University, 1997</div>
+            <div><span>BS</span>Sejong University, 1995</div>
+          </div>
+          <div class="director-links">
+            <a href="mailto:cchung@sejong.ac.kr">cchung@sejong.ac.kr</a>
+            <a href="https://sejong.elsevierpure.com/en/persons/chang-ho-chung/" target="_blank" rel="noopener">Sejong University Pure 프로필</a>
+            <a href="https://scholar.google.com/scholar?q=Chang-Ho+Chung+Sejong+University+fermented" target="_blank" rel="noopener">Google Scholar</a>
+          </div>
+          <div class="director-note">프로필 사진과 소개 문구는 실제 자료로 교체 가능합니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection" id="members">
+    <div class="wrap subsection-grid">
+      <div class="subsection-label">MEMBERS</div>
+      <div>
+        <h3 style="margin-bottom:26px;">연구원</h3>
+        <div class="member-grid">
+          <div class="member"><div class="avatar">연구</div><div class="mname">연구원 조O아</div><div class="mrole">박사과정</div></div>
+          <div class="member"><div class="avatar">연구</div><div class="mname">연구원 명O민</div><div class="mrole">석사과정</div></div>
+          <div class="member"><div class="avatar">연구</div><div class="mname">연구원 조O은</div><div class="mrole">석사과정</div></div>
+          <div class="member"><div class="avatar">연구</div><div class="mname">연구원 이O지</div><div class="mrole">석사과정</div></div>
+        </div>
+        <div class="note">구성원 프로필은 추후 실제 정보로 업데이트됩니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection" id="collaborators">
+    <div class="wrap subsection-grid">
+      <div class="subsection-label">COLLABORATORS</div>
+      <div>
+        <h3 style="margin-bottom:22px;">수행완료 협력기관</h3>
+        <div class="collab-list">
+          <div class="collab-chip">(주)농심</div>
+          <div class="collab-chip">농림축산식품부</div>
+          <div class="collab-chip">농협</div>
+          <div class="collab-chip">외식업중앙회</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESEARCH ===================== -->
+<section id="research">
+  <div class="section-head">
+    <div class="wrap">
+      <div class="kicker">THREE AXES</div>
+      <h2>FOOD · CULTURE · SOCIETY</h2>
+    </div>
+  </div>
+
+  <div class="pillar" id="food" data-axis="food">
+    <div class="wrap pillar-grid">
+      <div class="pillar-head">
+        <div class="seal">食</div>
+        <div class="pillar-head-text">
+          <div class="en">FOOD</div>
+          <h3>재료의 과학</h3>
+          <p class="pillar-desc">The material at the center — how it's made, understood, and made better.</p>
+        </div>
+      </div>
+      <div class="item-list">
+        <div class="item"><div class="name">Food Science</div><div class="desc">식품의 화학과 물성을 규명하는 기초 연구.</div></div>
+        <div class="item"><div class="name">Fermentation</div><div class="desc">시간이 만드는 맛, 발효의 원리와 활용.</div></div>
+        <div class="item"><div class="name">Traditional Food</div><div class="desc">전통 조리법 속에 담긴 지혜를 기록합니다.</div></div>
+        <div class="item"><div class="name">Food Innovation</div><div class="desc">새로운 재료와 기술로 미래의 맛을 실험합니다.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pillar" id="culture" data-axis="culture">
+    <div class="wrap pillar-grid">
+      <div class="pillar-head">
+        <div class="seal">文</div>
+        <div class="pillar-head-text">
+          <div class="en">CULTURE</div>
+          <h3>기억의 지도</h3>
+          <p class="pillar-desc">The meaning around the material — memory, place, and identity.</p>
+        </div>
+      </div>
+      <div class="item-list">
+        <div class="item"><div class="name">Korean Food Culture</div><div class="desc">한국인의 식탁에 새겨진 문화적 의미를 탐구합니다.</div></div>
+        <div class="item"><div class="name">Food Heritage</div><div class="desc">세대를 거쳐 전해진 음식의 역사를 기록합니다.</div></div>
+        <div class="item"><div class="name">Regional Food</div><div class="desc">지역마다 다른 맛의 지도를 그립니다.</div></div>
+        <div class="item"><div class="name">Food &amp; Tourism</div><div class="desc">음식이 만드는 여행의 이유를 연구합니다.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pillar" id="society" data-axis="society">
+    <div class="wrap pillar-grid">
+      <div class="pillar-head">
+        <div class="seal">社</div>
+        <div class="pillar-head-text">
+          <div class="en">SOCIETY</div>
+          <h3>선택의 구조</h3>
+          <p class="pillar-desc">The system beyond the material — choice, industry, and what comes next.</p>
+        </div>
+      </div>
+      <div class="item-list">
+        <div class="item"><div class="name">Food Consumption</div><div class="desc">소비자의 선택 뒤에 숨은 심리와 행동을 분석합니다.</div></div>
+        <div class="item"><div class="name">Food Industry</div><div class="desc">산업의 흐름 속에서 식품의 가치를 진단합니다.</div></div>
+        <div class="item"><div class="name">Sustainability</div><div class="desc">지속 가능한 먹거리 체계를 설계합니다.</div></div>
+        <div class="item"><div class="name">Future Food</div><div class="desc">다가올 식탁의 모습을 미리 그려봅니다.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection" id="projects">
+    <div class="wrap">
+      <div class="subsection-label" style="margin-bottom:26px;">CURRENT PROJECTS</div>
+      <div class="proj-list">
+        <div class="proj">
+          <div><div class="ptitle">전통발효식품의 과학화</div><div class="pdesc">전통 발효식품의 미생물·성분·공정을 과학적으로 규명해 표준화된 데이터로 정리합니다.</div></div>
+          <div class="tag ongoing">진행중</div>
+        </div>
+        <div class="proj">
+          <div><div class="ptitle">식품신소재 활용 및 제품개발</div><div class="pdesc">발효 기술과 새로운 원료를 접목해 미래 식품 소재와 제품을 개발합니다.</div></div>
+          <div class="tag ongoing">진행중</div>
+        </div>
+        <div class="proj">
+          <div><div class="ptitle">전통발효마을을 통한 지속가능한 지역활성화 모델구축</div><div class="pdesc">전통 발효식품 자산을 지역 활성화와 연결하는 지속가능한 모델을 설계합니다.</div></div>
+          <div class="tag ongoing">진행중</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection" id="publications">
+    <div class="wrap">
+      <div class="subsection-label" style="margin-bottom:6px;">PUBLICATIONS</div>
+      <h3 style="margin-bottom:26px;">발효 · 식품과학 연구 논문</h3>
+      <div class="pub-list" id="pubList"></div>
+      <div class="pub-source-note">
+        발효식품 및 식품과학 분야 연구 실적은 세종대학교 연구자 정보 플랫폼(Sejong University Pure)에 등재된 자료를 바탕으로 구성했습니다. 각 논문 제목 옆의 버튼을 누르면 Google Scholar와 한국학술정보서비스(RISS)에서 해당 논문을 바로 검색할 수 있습니다.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FCS DATABASE ===================== -->
+<section class="database" id="database">
+  <div class="section-head">
+    <div class="wrap">
+      <div class="kicker">FCS FOOD DATABASE</div>
+      <h2>음식 하나, 열한 개의 렌즈</h2>
+      <p class="lede">김치 한 그릇을 역사·지역·재료·미생물·발효과정·영양성분·기능성·논문·연구자·문화·제품까지 열한 갈래로 열어봅니다. FCS Lab이 쌓아가는 한국 음식문화 지식지도의 첫 걸음입니다.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="db-explainer">
+      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g stroke="var(--ink)" stroke-opacity="0.18" stroke-width="1.4">
+          <line x1="300" y1="300" x2="300" y2="90"/>
+          <line x1="300" y1="300" x2="413.5" y2="123.3"/>
+          <line x1="300" y1="300" x2="491.0" y2="212.8"/>
+          <line x1="300" y1="300" x2="507.9" y2="329.9"/>
+          <line x1="300" y1="300" x2="458.7" y2="437.5"/>
+          <line x1="300" y1="300" x2="359.2" y2="501.5"/>
+          <line x1="300" y1="300" x2="240.8" y2="501.5"/>
+          <line x1="300" y1="300" x2="141.3" y2="437.5"/>
+          <line x1="300" y1="300" x2="92.1" y2="329.9"/>
+          <line x1="300" y1="300" x2="109.0" y2="212.8"/>
+          <line x1="300" y1="300" x2="186.5" y2="123.3"/>
+        </g>
+        <circle cx="300" cy="300" r="54" fill="var(--seal)"/>
+        <text x="300" y="306" text-anchor="middle" class="db-center-label">음식</text>
+
+        <g>
+          <circle cx="300" cy="90" r="5" fill="var(--doenjang)"/>
+          <text x="300" y="72" text-anchor="middle" class="db-node-label">역사</text>
+          <circle cx="413.5" cy="123.3" r="5" fill="var(--doenjang)"/>
+          <text x="413.5" y="105.3" text-anchor="middle" class="db-node-label">지역</text>
+          <circle cx="491.0" cy="212.8" r="5" fill="var(--doenjang)"/>
+          <text x="530" y="212.8" text-anchor="start" class="db-node-label">재료</text>
+          <circle cx="507.9" cy="329.9" r="5" fill="var(--celadon)"/>
+          <text x="546.9" y="329.9" text-anchor="start" class="db-node-label">미생물</text>
+          <circle cx="458.7" cy="437.5" r="5" fill="var(--celadon)"/>
+          <text x="470" y="460" text-anchor="start" class="db-node-label">발효과정</text>
+          <circle cx="359.2" cy="501.5" r="5" fill="var(--celadon)"/>
+          <text x="359.2" y="524" text-anchor="middle" class="db-node-label">영양성분</text>
+          <circle cx="240.8" cy="501.5" r="5" fill="var(--celadon)"/>
+          <text x="240.8" y="524" text-anchor="middle" class="db-node-label">기능성</text>
+          <circle cx="141.3" cy="437.5" r="5" fill="var(--seal)"/>
+          <text x="130" y="460" text-anchor="end" class="db-node-label">관련논문</text>
+          <circle cx="92.1" cy="329.9" r="5" fill="var(--seal)"/>
+          <text x="53.1" y="329.9" text-anchor="end" class="db-node-label">관련연구자</text>
+          <circle cx="109.0" cy="212.8" r="5" fill="var(--seal)"/>
+          <text x="70" y="212.8" text-anchor="end" class="db-node-label">관련문화</text>
+          <circle cx="186.5" cy="123.3" r="5" fill="var(--seal)"/>
+          <text x="186.5" y="105.3" text-anchor="middle" class="db-node-label">관련제품</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="db-search-row">
+      <input type="text" class="db-search" id="dbSearch" placeholder="음식 이름으로 검색 (예: 김치, 된장, 막걸리)">
+    </div>
+    <div class="db-count" id="dbCount"></div>
+
+    <div class="food-grid" id="foodGrid"></div>
+    <div class="food-detail" id="foodDetail"></div>
+
+    <div class="db-note">현재 3개 음식이 구축되어 있습니다 (목표: 20~30개). 새로운 음식 항목은 계속 추가될 예정입니다.</div>
+  </div>
+</section>
+
+<!-- ===================== FCS INSIGHT ===================== -->
+<section class="insight" id="insight">
+  <div class="section-head">
+    <div class="wrap">
+      <div class="kicker">FCS LAB'S STORY BRAND</div>
+      <h2>FCS INSIGHT</h2>
+      <p class="lede">FCS Lab의 연구를 가장 쉬운 언어로 풀어내는 이야기입니다.</p>
+      <div class="wip-banner">📖 정장호 교수 연구를 바탕으로 한 FCS INSIGHT 10편이 첫 공개되었습니다. 아래 목록에서 제목을 눌러 전체 글을 읽어보세요. 새로운 이야기는 계속 추가될 예정입니다.</div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="insight-list" id="insightList"></div>
+    <div class="insight-detail" id="insightDetail"></div>
+
+    <div class="picks-head">
+      <div class="eyebrow">DIRECTOR'S PICKS</div>
+      <h3>정장호의 픽</h3>
+      <p>FCS Lab 밴드에 정장호 교수가 직접 공유한 기사들입니다. 음식 연구를 넘어, 지역·사회·환경까지 오간 시선의 기록입니다.</p>
+    </div>
+    <div class="picks-list" id="picksList"></div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="fbrand">FCS LAB</div>
+    <div class="ftag">Understanding Food, Connecting Culture, Shaping Society.</div>
+    <div class="fcontact">
+      <a href="mailto:contact@fcslab.org">contact@fcslab.org</a>
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#insight">FCS Insight</a>
+    </div>
+    <div class="fyear">&copy; 2026 FCS Lab — Food Culture and Society Laboratory</div>
+  </div>
+</footer>
+
+<script>
+  // ---- Publications data: edit or append entries here to update the list ----
+  const PUBLICATIONS = [
+    {
+      year: 2014,
+      authors: "박지희, 정장호",
+      title: "시판 전통누룩의 젖산균 분리동정과 제조단양주의 품질특성",
+      journal: "한국식품과학회지",
+      detail: "",
+      url: "https://www.dbpia.co.kr/pdf/pdfView?nodeId=NODE02399041"
+    },
+    {
+      year: 2018,
+      authors: "박지희, 김성건, 이용재, 정장호",
+      title: "파이로시퀀싱을 이용한 상업용 전통누룩의 미생물 군집분석",
+      journal: "한국식품과학회지",
+      detail: "",
+      url: "https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE07399276"
+    },
+    {
+      year: 2022,
+      authors: "Kang, S. &amp; Chung, C. H.",
+      title: "Characteristics of <i>Tenebrio molitor</i> larvae and <i>Bombyx mori</i> pupae sequentially fermented with <i>Aspergillus oryzae</i> and <i>Bacillus subtilis</i>",
+      journal: "Korean Journal of Food Science and Technology",
+      detail: "54(1), 94–102"
+    },
+    {
+      year: 2020,
+      authors: "Pheng, S., Le Han, H., Park, D. S., Chung, C. H. &amp; Kim, S. G.",
+      title: "<i>Lactococcus kimchii</i> sp. nov., a new lactic acid bacterium isolated from kimchi",
+      journal: "International Journal of Systematic and Evolutionary Microbiology",
+      detail: "70(1), 505–510",
+      openAccess: true
+    },
+    {
+      year: 2018,
+      authors: "Cho, J. H., Zhao, H. &amp; Chung, C. H.",
+      title: "Analysis of volatile compounds in fermented seasoning pastes using edible insects by SPME-GC/MS",
+      journal: "Korean Journal of Food Science and Technology",
+      detail: "50(2), 152–164"
+    },
+    {
+      year: 2018,
+      authors: "Cho, J. H., Zhao, H. L., Kim, J. S., Kim, S. H. &amp; Chung, C. H.",
+      title: "Characteristics of fermented seasoning sauces using <i>Tenebrio molitor</i> larvae",
+      journal: "Innovative Food Science and Emerging Technologies",
+      detail: "45, 186–195"
+    },
+    {
+      year: 2018,
+      authors: "Zhao, H., Cho, J. H. &amp; Chung, C. H.",
+      title: "Characteristics of seasoning pastes fermented by <i>Aspergillus oryzae</i> and <i>Bacillus subtilis</i> using edible insects",
+      journal: "Korean Journal of Food Science and Technology",
+      detail: "50(3), 297–307"
+    }
+  ];
+
+  function renderPublications(){
+    const list = document.getElementById('pubList');
+    if(!list) return;
+    list.innerHTML = PUBLICATIONS
+      .slice()
+      .sort((a,b)=> b.year - a.year)
+      .map(p=>{
+        const q = encodeURIComponent(p.title);
+        const scholarUrl = `https://scholar.google.com/scholar?q=${q}`;
+        const rissUrl = `https://www.riss.kr/search/Search.do?query=${q}`;
+        return `
+        <div class="pub">
+          <div class="pub-top">
+            <span class="pyear">${p.year}</span>
+            <span class="ptitle2">${p.title}${p.openAccess ? '<span class="pbadge">OPEN ACCESS</span>' : ''}</span>
+          </div>
+          <div class="pmeta"><span class="pauthors">${p.authors}</span> — <em>${p.journal}</em>${p.detail ? ', ' + p.detail : ''}</div>
+          <div class="pub-links">
+            ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">원문 PDF</a>` : ''}
+            <a class="scholar" href="${scholarUrl}" target="_blank" rel="noopener">Google Scholar</a>
+            <a class="riss" href="${rissUrl}" target="_blank" rel="noopener">RISS</a>
+          </div>
+        </div>`;
+      }).join('');
+  }
+  renderPublications();
+
+  // ---- FCS Insight: 10 stories based on 정장호 교수 연구 ----
+  const INSIGHTS = [
+    {
+      num: "#001",
+      title: "김치 속에 새로운 생명체가 산다",
+      subtitle: "<i>Lactococcus kimchii</i> 발견기",
+      teaser: "정장호 교수 연구팀이 배추김치에서 세상에 없던 유산균을 찾아낸 이야기.",
+      origin: "<b>이 이야기의 시작 —</b> FCS Lab 밴드에서 한 학생이 \"Fermentation(발효)의 뜻을 찾아봤는데, 발효 하면 김치가 떠오른다\"며 쉽게 설명해달라고 남긴 질문에서 출발한 글입니다.",
+      body: [
+        "김치를 발효시키는 건 사람이 아니라 눈에 보이지 않는 유산균들입니다. 정장호 교수 연구팀은 시중에서 파는 배추김치를 분석하다가, 세상에 알려진 적 없는 완전히 새로운 유산균 종을 찾아냈습니다. 이름하여 <strong><i>Lactococcus kimchii</i></strong> — '김치의 락토코쿠스'라는 뜻이에요.",
+        "이 균의 유전자(16S rRNA)를 기존에 알려진 균들과 비교해보니, 대만이나 유럽에서 발견된 유산균들과는 살짝 다른 새로운 종이라는 게 확인됐습니다. 즉, 김치는 단순한 채소절임이 아니라 한국의 배추, 소금, 온도, 손맛이 만들어낸 독자적인 미생물 생태계라는 뜻이죠.",
+        "<strong>왜 중요할까?</strong> 새로운 유산균 하나가 발견될 때마다, 그 균이 만드는 유기산·향·건강 기능성도 새로 밝혀질 가능성이 생깁니다. 우리가 매일 먹는 김치 속에 아직 이름도 없는 생명체가 숨어 있을지 모른다는 사실, 신기하지 않나요?"
+      ]
+    },
+    {
+      num: "#002",
+      title: "같은 물김치인데 왜 맛이 다를까?",
+      subtitle: "나박김치 vs 동치미",
+      teaser: "온도에 따라 달라지는 발효 속도와 맛의 균형을 실험으로 추적합니다.",
+      body: [
+        "물김치라고 다 같은 물김치가 아닙니다. 얇게 썬 무와 채소를 넣는 나박김치, 무를 통째로 넣는 동치미는 발효 과정에서 전혀 다른 화학 반응이 일어납니다.",
+        "연구팀은 이 두 김치를 4℃(냉장), 10℃, 20℃(상온)에서 각각 발효시키며 유산균 수, 유기산 함량, 향 성분을 추적했습니다. 그 결과 온도가 높을수록 발효 속도는 빨라지지만, 원하는 새콤달콤한 맛의 '균형'은 오히려 낮은 온도에서 천천히 익을 때 더 좋았습니다.",
+        "<strong>왜 중요할까?</strong> 할머니가 \"김치는 서늘한 데서 천천히 익혀야 맛있다\"고 하신 말씀이 과학적으로 근거가 있다는 걸 보여주는 결과예요. 급하게 익히면 유산균이 폭발적으로 늘지만, 맛의 '레이어'는 오히려 단순해질 수 있습니다."
+      ]
+    },
+    {
+      num: "#003",
+      title: "동치미 국물, 향기부터 다르다",
+      subtitle: "관능검사로 밝힌 국물의 정체",
+      teaser: "시중 동치미 9종을 비교한 관능검사와 화학 분석 이야기.",
+      body: [
+        "시중에 파는 동치미 국물 9종을 모아놓고 사람이 직접 냄새 맡고 맛보는 <strong>관능검사(sensory evaluation)</strong>와 기계로 성분을 분석하는 화학적 분석을 동시에 진행한 연구도 있습니다.",
+        "브랜드마다 짠맛·신맛·탄산감·무 특유의 알싸한 향의 비율이 제각각이었고, 이 차이는 소금 농도나 유산균 조성뿐 아니라 숙성 기간과 재료 배합비에서 비롯된다는 게 확인됐습니다.",
+        "<strong>왜 중요할까?</strong> '동치미 맛있다'는 말 속에는 사실 산도, 당도, 휘발성 향 성분까지 여러 요소가 복합적으로 작용하고 있어요. 좋아하는 동치미 브랜드가 있다면, 그건 여러분의 혀가 이미 정교한 화학 분석을 하고 있었다는 뜻입니다."
+      ]
+    },
+    {
+      num: "#004",
+      title: "미래 식량, 밀웜으로 만든 '곤충 간장'",
+      subtitle: "상상이 현실이 되다",
+      teaser: "갈색거저리 유충으로 감칠맛 나는 발효 소스를 만든 연구.",
+      body: [
+        "갈색거저리 유충, 흔히 <strong>밀웜(<i>Tenebrio molitor</i>)</strong>이라 불리는 곤충으로 간장 같은 발효 조미료를 만들 수 있을까요? 정장호 교수팀은 실제로 밀웜에 누룩곰팡이(<i>Aspergillus oryzae</i>)와 고초균(<i>Bacillus subtilis</i>)을 넣어 발효시킨 곤충 발효 소스를 만들었습니다.",
+        "발효가 진행되면서 곤충 단백질이 분해되어 감칠맛을 내는 <strong>아미노산(글루탐산 등)</strong>이 크게 증가했고, 일반 콩 간장 못지않은 감칠맛 프로파일을 보였습니다.",
+        "<strong>왜 중요할까?</strong> 지구 인구는 늘고 있지만 가축을 키울 땅과 물은 한정돼 있어요. 곤충은 같은 양의 단백질을 얻는 데 훨씬 적은 자원이 듭니다. 오래된 발효 기술(누룩, 메주)을 곤충에 적용하면, 전통과 미래 식량이 만나는 새로운 조미료가 탄생할 수 있습니다."
+      ]
+    },
+    {
+      num: "#005",
+      title: "누에번데기 된장이 있다면 믿으시겠어요?",
+      subtitle: "2단계 순차 발효의 힘",
+      teaser: "밀웜과 누에번데기를 두 번 발효시켜 냄새 장벽을 낮춘 실험.",
+      body: [
+        "밀웜뿐 아니라 <strong>누에나방의 번데기(<i>Bombyx mori</i> pupae)</strong>도 발효 재료가 될 수 있습니다. 연구팀은 밀웜과 누에번데기를 누룩곰팡이로 먼저 발효시킨 뒤, 다시 고초균으로 2차 발효시키는 순차 발효(sequential fermentation) 기법을 시도했습니다.",
+        "한 단계만 발효시켰을 때보다 두 단계를 거쳤을 때 아미노산과 감칠맛 성분이 더 풍부해졌고, 곤충 특유의 비린 냄새도 줄어드는 효과가 나타났습니다.",
+        "<strong>왜 중요할까?</strong> 사람들이 곤충을 먹기 꺼리는 가장 큰 이유는 '냄새'와 '식감' 때문이에요. 이 연구는 전통 장류를 만들 때 쓰는 2단계 발효법으로 그 장벽을 낮출 수 있다는 걸 보여줍니다. 된장·간장 담그는 지혜가 미래 대체 단백질 산업의 열쇠가 될 수도 있겠죠."
+      ]
+    },
+    {
+      num: "#006",
+      title: "곤충 발효장의 냄새를 과학으로 분석하다",
+      subtitle: "'전자 코'로 읽는 향기의 정체",
+      teaser: "SPME-GC/MS 분석으로 밝혀낸 곤충 발효 조미료의 향 성분.",
+      body: [
+        "'구수하다', '고소하다' 같은 말은 사실 공기 중에 떠다니는 수십 가지 휘발성 화합물의 조합입니다. 연구팀은 곤충으로 만든 발효 조미료의 향을 <strong>SPME-GC/MS</strong>라는 정밀 분석 장비로 뜯어봤습니다. 이 장비는 향기 성분을 하나하나 붙잡아 그 정체를 알려주는 일종의 '전자 코'예요.",
+        "분석 결과, 일반 된장·간장에서도 발견되는 알코올류, 산류, 에스터류 성분이 곤충 발효장에서도 비슷하게 나타났고, 발효 기간이 길어질수록 향의 복잡성이 증가했습니다.",
+        "<strong>왜 중요할까?</strong> \"곤충 음식은 다 비린내가 날 것 같다\"는 편견과 달리, 제대로 발효시키면 우리에게 익숙한 '장맛'과 비슷한 향을 만들어낼 수 있다는 과학적 증거입니다. 좋은 냄새는 우연이 아니라 미생물과 시간이 만드는 결과물이에요."
+      ]
+    },
+    {
+      num: "#007",
+      title: "곤충을 조미료로 먹는다면, 사람들은 왜 선택할까?",
+      subtitle: "식생활 라이프스타일로 본 소비자 심리",
+      teaser: "건강 추구형부터 안전 중시형까지, 소비자 성향과 수용도의 관계.",
+      body: [
+        "아무리 좋은 발효 기술이 있어도 소비자가 사 먹지 않으면 소용없습니다. 그래서 연구팀은 식용곤충 조미료에 대한 사람들의 <strong>식생활 라이프스타일(dietary lifestyle)</strong>을 분석했습니다. 건강 추구형, 안전 중시형, 편리 추구형, 미식 탐구형 등으로 소비자 성향을 나누고, 어떤 성향의 사람이 곤충 조미료를 더 긍정적으로 받아들이는지 살펴본 거죠.",
+        "그 결과 건강과 새로운 경험을 중시하는 소비자일수록 거부감이 적었고, 반대로 안전성을 최우선으로 따지는 소비자는 더 신중한 태도를 보였습니다.",
+        "<strong>왜 중요할까?</strong> 새로운 식재료가 시장에 자리 잡으려면 맛과 영양만큼 '심리적 장벽'을 이해하는 것도 중요합니다. 여러분이라면 어떤 이유로 곤충 조미료에 도전해볼 수 있을까요?"
+      ]
+    },
+    {
+      num: "#008",
+      title: "전 세계 레시피 수천 개를 분석하면 보이는 것",
+      subtitle: "빅데이터로 읽는 각 나라의 '맛의 지문'",
+      teaser: "레시피 데이터 분석으로 찾아낸 나라별 핵심 재료 조합.",
+      body: [
+        "한 나라의 음식 문화를 알고 싶다면 어떻게 해야 할까요? 연구팀은 전 세계 요리 레시피 사이트에서 수천 개의 레시피 데이터를 모아, 각 나라 음식에 어떤 재료가 얼마나 자주 쓰이는지 컴퓨터로 분석했습니다.",
+        "그 결과 나라별로 '핵심 재료 조합'이 뚜렷하게 갈렸습니다. 예를 들어 마늘·양파·토마토가 자주 함께 등장하는 지역, 간장·마늘·참기름이 반복되는 지역처럼 각 문화권마다 고유한 <strong>'맛의 지문(flavor fingerprint)'</strong>이 있다는 것이죠.",
+        "<strong>왜 중요할까?</strong> 이건 단순한 요리책 정리가 아니라 빅데이터로 문화를 읽는 방법입니다. 재료 조합 패턴만 봐도 그 나라 사람들이 무엇을 중요하게 여기는지, 기후와 농업 환경이 음식에 어떻게 반영됐는지 알 수 있어요."
+      ]
+    },
+    {
+      num: "#009",
+      title: "한식은 왜, 그리고 어떻게 세계인의 입맛을 사로잡을까",
+      subtitle: "정체성과 현지화 사이의 균형",
+      teaser: "성공적인 한식 세계화 사례에서 찾은 공통 원리.",
+      body: [
+        "한식의 세계화는 단순히 \"한식당을 많이 여는 것\"이 아닙니다. 연구팀은 외국인들이 한식을 선호하게 되는 이유와, 성공적으로 현지화(glocalization)된 한식 사례들을 분석했습니다.",
+        "핵심은 <strong>원래의 정체성은 지키되, 현지인의 입맛에 맞게 조절하는 균형</strong>이었습니다. 예를 들어 매운맛의 강도를 조절하거나, 익숙한 조리법(볶음, 구이 등)과 결합해 낯설지 않게 소개하는 방식이 성공 확률을 높였습니다.",
+        "<strong>왜 중요할까?</strong> 좋은 음식도 전달하는 '방법'이 없으면 세계로 뻗어나가기 어렵습니다. 이 연구는 K-푸드가 한류처럼 세계적으로 사랑받으려면 무엇을 지키고 무엇을 바꿔야 하는지에 대한 힌트를 줍니다."
+      ]
+    },
+    {
+      num: "#010",
+      title: "발효 온도, 1도의 차이가 만드는 미생물 생태계",
+      subtitle: "김치 속 유산균의 '세대교체' 드라마",
+      teaser: "온도에 따라 달라지는 유산균의 우점종 변화를 추적한 연구.",
+      body: [
+        "발효는 결국 미생물들의 생존 경쟁입니다. 연구팀은 김치를 여러 온도에서 발효시키며 시간에 따라 어떤 유산균이 우세해지는지 추적했습니다. 처음엔 여러 종류의 균이 섞여 있다가, 발효가 진행될수록 산에 강한 특정 유산균(<i>Leuconostoc</i>, <i>Weissella</i> 등)이 살아남아 전체 생태계를 장악하는 패턴이 나타났습니다.",
+        "온도가 낮을수록 이 '균의 세대교체'가 천천히 일어나 훨씬 다양하고 안정적인 맛이 만들어졌습니다.",
+        "<strong>왜 중요할까?</strong> 김치냉장고가 왜 그렇게 정교하게 온도를 관리하는지 알 수 있는 대목이에요. 우리는 김치 하나를 먹으며 사실 수십억 마리 미생물들의 '생존 드라마'가 만들어낸 결과물을 맛보고 있는 셈입니다."
+      ]
+    }
+  ];
+
+  function renderInsightList(){
+    const list = document.getElementById('insightList');
+    if(!list) return;
+    list.innerHTML = INSIGHTS.map((it, i) => `
+      <button class="insight-row" data-idx="${i}">
+        <div class="insight-num">${it.num}</div>
+        <div>
+          <div class="insight-title">${it.title}</div>
+          <div class="insight-teaser">${it.teaser}</div>
+        </div>
+        <div class="insight-read">READ →</div>
+      </button>
+      ${it.origin ? `<div class="insight-origin">${it.origin}</div>` : ''}
+    `).join('');
+    list.querySelectorAll('.insight-row').forEach(btn=>{
+      btn.addEventListener('click', ()=> openInsightDetail(parseInt(btn.dataset.idx,10)));
+    });
+  }
+
+  function openInsightDetail(idx){
+    const it = INSIGHTS[idx];
+    const detail = document.getElementById('insightDetail');
+    if(!it || !detail) return;
+
+    document.querySelectorAll('.insight-row').forEach(r=>{
+      r.classList.toggle('active', parseInt(r.dataset.idx,10)===idx);
+    });
+
+    const bodyHtml = it.body.map(p => `<p>${p}</p>`).join('');
+    detail.innerHTML = `
+      <div class="id-head">
+        <div>
+          <div class="id-num">${it.num} · FCS INSIGHT</div>
+          <h3>${it.title}${it.subtitle ? ' — ' + it.subtitle : ''}</h3>
+        </div>
+        <button class="id-close" id="idClose">닫기 ✕</button>
+      </div>
+      <div class="id-body">${bodyHtml}</div>
+      <div class="id-nav">
+        <span class="id-prev ${idx===0 ? 'disabled':''}">← 이전 이야기</span>
+        <span class="id-next ${idx===INSIGHTS.length-1 ? 'disabled':''}">다음 이야기 →</span>
+      </div>
+    `;
+    detail.classList.add('open');
+    document.getElementById('idClose').addEventListener('click', ()=>{
+      detail.classList.remove('open');
+      document.querySelectorAll('.insight-row').forEach(r=>r.classList.remove('active'));
+    });
+    const prevBtn = detail.querySelector('.id-prev');
+    const nextBtn = detail.querySelector('.id-next');
+    if(idx > 0) prevBtn.addEventListener('click', ()=> openInsightDetail(idx-1));
+    if(idx < INSIGHTS.length-1) nextBtn.addEventListener('click', ()=> openInsightDetail(idx+1));
+    detail.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  renderInsightList();
+
+  // ---- Director's Picks: every article-style post from the FCS Lab Band, with 정장호's own notes ----
+  const PICKS = [
+    {
+      axis: "society",
+      title: "원소주는 되고 막걸리는 안되고… 애매한 전통주 기준 언제까지?",
+      note: "전통주의 정의와 적용을 명확히 해야한다.",
+      source: "이데일리",
+      date: "2022.06.12",
+      url: "https://m.edaily.co.kr/news/Read?newsId=02453446632291856&mediaCodeNo=257&OutLnkChk=Y"
+    },
+    {
+      axis: "column",
+      title: "'봉사와 희생'만 강요하지 말자 | 도시재생 마인드",
+      note: "지역도시재생에 청년들의 봉사와 희생을 당연시 하거나 요구하지 말라. 그들의 인생이 행정의 실험재료가 될 수 없다.",
+      source: "브런치",
+      date: "2022.06.12",
+      url: "https://brunch.co.kr/@choiss/25"
+    },
+    {
+      axis: "column",
+      title: "텅텅 비고 허허벌판…공공기관뿐인 도시에 '정착'할 삶은 없다",
+      note: "조금 더 체계적인 계획과 지속가능하게 만들 아이디어가 필요하다.",
+      source: "경향신문",
+      date: "2022.06.12",
+      url: "http://naver.me/GYuquobm"
+    },
+    {
+      axis: "food",
+      title: "'풀의 정체가 궁금하시죠?' 13개국 수출되는 뜻밖의 한국 식품",
+      note: "동충하초",
+      source: "조선일보",
+      date: "2022.06.12",
+      url: "https://www.chosun.com/economy/startup_story/2022/05/05/SW54VEDNBFEKRBSQSAUMQKKCOI/?outputType=amp"
+    },
+    {
+      axis: "column",
+      title: "새 정부 현안 '지방소멸' 해결 시급 \"전문대 역할 재정립 필요\"",
+      note: "발등위에 불, 초고령사회, 아이없는 지역 곧 지방소멸",
+      source: "한국대학신문",
+      date: "2022.06.12",
+      url: "http://news.unn.net/news/articleView.html?idxno=527609"
+    },
+    {
+      axis: "column",
+      title: "귀가 전후, 잠들기 전… 간단하게 뱃살 빼는 방법 6",
+      note: "",
+      source: "코메디닷컴",
+      date: "2022.06.12",
+      url: "https://kormedi.com/amp/1397811/%EF%BB%BF%EA%B7%80%EA%B0%80-%EC%A0%84%ED%9B%84-%EC%9E%A0%EB%93%A4%EA%B8%B0-%EC%A0%84-%EA%B0%84%EB%8B%A8%ED%95%98%EA%B2%8C-%EB%B1%83%EC%82%B4-%EB%B9%BC%EB%8A%94-%EB%B0%A9%EB%B2%95-6/"
+    },
+    {
+      axis: "column",
+      title: "2021 청년마을 만들기",
+      note: "좋은 청년일자리를 지역에 만드는 일은 지역소멸을 늦추고 국가재정을 튼튼하게 하며 청년들이 결혼, 출산, 육아를 꿈꾸게 할 수 있고, 건강한 삶을 즐길 수 있는 대한민국의 여러 문제를 해결할 수 있다.",
+      source: "청년마을 만들기",
+      date: "2022.06.12",
+      url: "https://localcity.modoo.at/?link=dg2eqi3t"
+    },
+    {
+      axis: "column",
+      title: "최병성 목사 \"지구 돌보는 일, 하나님이 주신 소명\"",
+      note: "환경보전과 자연살리는 일은 보수나 진보, 신세대와 구세대, 지역적 갈등 등을 초월한다. 이성과 양심의 문제다.",
+      source: "네이버뉴스",
+      date: "2022.06.12",
+      url: "https://n.news.naver.com/article/032/0003151295"
+    },
+    {
+      axis: "culture",
+      title: "김치, 외국인도 좋아하는 '힙한 슈퍼푸드'",
+      note: "냄새나는 김치에서 힙한 국제화 김치로의 진화 속에는 결국 세계인들이 좋아할 식문화 이해가 먼저인 듯 하다.",
+      source: "경향신문",
+      date: "2022.06.12",
+      url: "https://n.news.naver.com/article/032/0003114290"
+    },
+    {
+      axis: "column",
+      title: "\"덜 먹더라도 사교육에 月 330만원\"…에듀푸어 속출",
+      note: "대도시에 살면 감당해야 하는 살인적 사교육비와 주거비, 이 모두는 결국 자식세대를 위한 부모들의 노후생활을 위협한다.",
+      source: "문화닷컴",
+      date: "2022.06.12",
+      url: "http://m.munhwa.com/mnews/view.html?no=2022060901071018358001&wlog_tag3=kakao_share"
+    }
+  ];
+  const AXIS_LABEL = { food: "FOOD", culture: "CULTURE", society: "SOCIETY", column: "칼럼" };
+
+  function renderPicks(){
+    const list = document.getElementById('picksList');
+    if(!list) return;
+    list.innerHTML = PICKS.map(p=>`
+      <a class="pick-card" href="${p.url}" target="_blank" rel="noopener">
+        <span class="pick-axis ${p.axis}">${AXIS_LABEL[p.axis]}</span>
+        <div class="pick-title">${p.title}</div>
+        ${p.note ? `<div class="pick-note">${p.note}</div>` : ''}
+        <div class="pick-meta">
+          <span>${p.source} · ${p.date}</span>
+          <span class="pick-link">원문 보기 ↗</span>
+        </div>
+      </a>`).join('');
+  }
+  renderPicks();
+
+  // ---- FCS Food Database ----
+  const FOODS = [
+    {
+      id: "kimchi",
+      hanja: "食",
+      color: "var(--doenjang)",
+      name: "김치", en: "Kimchi",
+      tagline: "배추 한 포기가 발효를 거쳐 얻는 시간의 맛",
+      history: "채소를 소금에 절여 저장하던 침채(沈菜) 문화에서 출발했으며, 17세기 이후 고추가 전래되면서 지금과 같은 붉은 양념 김치의 형태로 자리잡았습니다.",
+      region: "배추김치, 갓김치, 열무김치, 깍두기 등 지역과 재료에 따라 염도와 젓갈 사용, 유산균 분포까지 서로 다르게 발달했습니다.",
+      ingredients: "배추, 무, 마늘, 생강, 고춧가루, 젓갈(액젓), 소금",
+      microbes: "발효 초기에는 <i>Leuconostoc mesenteroides</i>·<i>Leuconostoc citreum</i>이, 후기에는 <i>Lactobacillus plantarum</i>·<i>Lactobacillus sakei</i>·<i>Weissella koreensis</i>가 우세해지며 맛이 변화합니다.",
+      process: "절임 → 양념 버무림 → 저온(4~15℃) 발효의 3단계로 진행됩니다. 류코노스톡 속 유산균이 만니톨과 이산화탄소를 만들어 청량한 탄산감을 주고, 산소를 차단해 잡균 번식을 억제합니다.",
+      nutrition: "식이섬유, 비타민 C, 캡사이신, 유산균이 풍부한 저열량 발효식품입니다.",
+      functionality: "장내 유익균 증식, 항균·항산화 활성 등 다양한 기능성이 국내외 연구로 보고되고 있습니다.",
+      papers: [{ title: "<i>Lactococcus kimchii</i> sp. nov., a new lactic acid bacterium isolated from kimchi", year: 2020 }],
+      researcher: "정장호 교수 (FCS Lab Director) — 발효식품 미생물 생태 전공",
+      culture: "김장(김치 담그기와 나누기 문화)은 2013년 유네스코 인류무형문화유산으로 등재되었습니다.",
+      products: "포장 김치, 김치 프리미엄 양념, 김치 활용 가공식품"
+    },
+    {
+      id: "doenjang",
+      hanja: "醬",
+      color: "var(--celadon)",
+      name: "된장", en: "Doenjang",
+      tagline: "콩이 시간을 만나 장(醬)이 되는 과정",
+      history: "콩을 발효시켜 장을 담그는 문화는 삼국시대 문헌에도 등장하며, 메주를 쑤어 띄운 뒤 소금물에 담가 숙성시키는 재래식 방법이 오랫동안 이어져 왔습니다.",
+      region: "지역마다 메주의 모양, 숙성 기간, 소금 농도가 달라 시골된장·강된장 등 다양한 변주가 존재합니다.",
+      ingredients: "대두(콩), 소금, 물",
+      microbes: "메주에는 <i>Bacillus subtilis</i>(고초균)와 <i>Aspergillus oryzae</i>(황국균)가 자연적으로 자리잡으며, 효모(<i>Saccharomyces cerevisiae</i>, <i>Zygosaccharomyces rouxii</i>)와 내염성 젖산균(<i>Tetragenococcus halophilus</i>)도 함께 관여합니다.",
+      process: "메주 제조(콩 삶기·성형·건조) → 자연 발효(1~2개월) → 소금물 숙성 후 간장·된장 분리 → 된장 추가 숙성(수개월~수년).",
+      nutrition: "단백질, 필수아미노산, 이소플라본 등 콩 유래 영양성분이 발효를 통해 분해·농축됩니다.",
+      functionality: "항산화 및 항암 관련 성분 연구가 보고되며, 숙성 기간이 길어질수록 기능성 성분이 증가하는 경향이 있습니다.",
+      papers: [{ title: "Characteristics of fermented seasoning sauces using <i>Tenebrio molitor</i> larvae", year: 2018 }],
+      researcher: "정장호 교수 (FCS Lab Director) — 동일 발효균(<i>Bacillus subtilis</i>, <i>Aspergillus oryzae</i>)을 활용한 장류 연구 수행",
+      culture: "\"장맛이 집안의 맛\"이라는 말처럼, 장 담그기와 나누기 풍습은 가정의 정체성과 상부상조 문화를 상징합니다.",
+      products: "재래식 된장, 개량식(공장형) 된장, 된장 소스류, 된장 분말"
+    },
+    {
+      id: "makgeolli",
+      hanja: "酒",
+      color: "var(--seal)",
+      name: "막걸리", en: "Makgeolli",
+      tagline: "밥이 누룩을 만나 술이 되는 순간",
+      history: "쌀 등 곡물을 발효시켜 만든 한국 고유의 탁주로, 농사와 늘 함께해 온 술이라 하여 농주(農酒)라 불렸습니다.",
+      region: "지역의 쌀과 물 특성에 따라 다양한 지역 막걸리 스타일이 발달했습니다.",
+      ingredients: "쌀(또는 밀), 누룩, 물",
+      microbes: "누룩 안에는 전분을 당으로 분해하는 곰팡이, 당을 알코올로 바꾸는 효모(<i>Saccharomyces cerevisiae</i>), 그리고 젖산균이 층을 이루며 함께 살아갑니다.",
+      process: "술밑(주모) 제조 → 누룩·지에밥·물을 섞어 당화와 알코올 발효가 동시에 일어나는 병행복발효 → 숙성 및 여과의 과정을 거칩니다.",
+      nutrition: "식이섬유, 비타민 B군, 아미노산이 풍부하며, 살균하지 않은 생막걸리에는 살아있는 효모가 다량 함유되어 있습니다.",
+      functionality: "생균(효모) 섭취를 통한 장 건강 관련 관심이 최근 높아지고 있으며, 저알콜·프리미엄 막걸리 개발 연구도 활발합니다.",
+      papers: [
+        { title: "시판 전통누룩의 젖산균 분리동정과 제조단양주의 품질특성", authors: "박지희, 정장호", year: 2014, journal: "한국식품과학회지", url: "https://www.dbpia.co.kr/pdf/pdfView?nodeId=NODE02399041" },
+        { title: "파이로시퀀싱을 이용한 상업용 전통누룩의 미생물 군집분석", authors: "박지희, 김성건, 이용재, 정장호", year: 2018, journal: "한국식품과학회지", url: "https://www.dbpia.co.kr/pdf/pdfView.do?nodeId=NODE07399276" }
+      ],
+      researcher: "정장호 교수 (FCS Lab Director) — 발효식품 미생물 전반 연구",
+      culture: "농번기 새참으로 나누던 술로 공동체 노동문화와 연결되며, 최근에는 청년층 사이에서 프리미엄 크래프트 막걸리로 재조명되고 있습니다.",
+      products: "생막걸리, 살균 막걸리, 프리미엄/스파클링 막걸리"
+    },
+    {
+      id: "gochujang",
+      hanja: "辛",
+      color: "var(--seal-deep)",
+      name: "고추장", en: "Gochujang",
+      tagline: "메주가루와 고춧가루가 만나 매운맛 속에 감칠맛을 품다",
+      history: "고추가 조선 후기(17세기 이후) 전래된 뒤 메주가루·찹쌀가루·엿기름 등과 배합해 발효시키며 자리잡은 한국 고유의 매운 장으로, 반가와 궁중에서 담그던 방식이 근대 이후 산업적으로 대중화되었습니다.",
+      region: "찹쌀 고추장, 보리 고추장 등 전분질 재료와 숙성 기간에 따라 다양한 향토 고추장이 전해집니다.",
+      ingredients: "메주가루(또는 코지), 고춧가루, 찹쌀가루·보리가루 등 전분질 재료, 엿기름, 소금",
+      microbes: "메주 유래 <i>Aspergillus oryzae</i>, <i>Bacillus subtilis</i>가 전분과 단백질을 당·아미노산으로 분해하며 발효를 이끕니다.",
+      process: "메주가루(또는 코지) 준비 → 찹쌀가루 등 전분질 호화·당화 → 고춧가루·소금과 혼합 → 항아리 숙성(수개월~수년).",
+      nutrition: "캡사이신, 유리아미노산, 유리당, 식이섬유 등을 함유하며 발효 중 단백질이 분해되어 감칠맛 성분(글루탐산 등)이 늘어납니다.",
+      functionality: "발효 부산물(청국장가루, 막걸리 지게미 등)을 첨가한 고추장은 대조군보다 총폴리페놀 함량과 항산화 활성(DPPH 라디칼 소거능)이 높아지는 경향이 보고되었습니다.",
+      papers: [
+        { title: "청국장가루와 고춧가루를 이용한 볶음소스 개발 및 품질특성", authors: "엄혜민 (지도교수: 정장호)", year: 2014, journal: "세종대학교 대학원 조리외식경영학과 국내석사 학위논문", url: "https://www.dbpia.co.kr/journal/detail?nodeId=T13380514" },
+        { title: "청국장가루와 고춧가루의 비율을 달리한 볶음소스 품질특성", authors: "엄혜민, 정장호", year: 2017, journal: "Culinary Science & Hospitality Research, 23(4), 1-9", url: "https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002237313" },
+        { title: "막걸리 주박 이용제조 고추장의 품질특성", authors: "배아영", year: "연도 미상", journal: "세종대학교 대학원 조리외식경영학과 국내석사 학위논문 (지도교수 정보 별도 확인 필요)", url: "https://scienceon.kisti.re.kr/srch/selectPORSrchArticle.do?cn=DIKO0015123723" }
+      ],
+      researcher: "정장호 교수 (FCS Lab Director) — 청국장가루·막걸리 지게미(주박) 등 발효 부산물을 활용한 고추장 응용 연구 지도",
+      culture: "\"장맛이 집안의 맛\"이라는 말처럼 장 담그기와 나누기 풍습은 가정의 정체성을 상징하며, 고추장은 비빔밥·떡볶이 등 한식의 매운맛을 대표합니다.",
+      products: "재래식 고추장, 개량식 고추장, 고추장 소스류, 고추장 베이스 양념장"
+    },
+    {
+      id: "ganjang",
+      hanja: "汁",
+      color: "var(--doenjang-deep)",
+      name: "간장", en: "Ganjang",
+      tagline: "메주가 소금물 속에서 우러난, 장맛의 근본",
+      history: "콩을 발효시켜 메주를 만들고 소금물에 담가 우려낸 뒤 된장과 분리해 얻는 액체 장으로, 삼국시대 문헌에도 등장하는 한국 발효 문화의 뿌리입니다.",
+      region: "숙성 기간에 따라 청장(맑은 국간장)과 진간장(오래 숙성된 진한 간장)으로 나뉘며, 지역마다 메주 배합과 소금 농도가 다릅니다.",
+      ingredients: "대두(콩), 소금, 물",
+      microbes: "메주에 자연적으로 자리잡는 <i>Aspergillus oryzae</i>(황국균), <i>Bacillus subtilis</i>(고초균)가 콩 단백질을 분해해 아미노산과 감칠맛 성분을 만듭니다.",
+      process: "메주 제조·건조 → 소금물에 메주를 담가 발효(수개월) → 액체(간장)와 고형분(된장) 분리 → 간장 달임(살균)·숙성.",
+      nutrition: "필수아미노산, 유리당, 나트륨, 발효 중 생성된 유기산과 향미 성분이 풍부합니다.",
+      functionality: "발효가 진행될수록 항산화 성분과 감칠맛을 내는 유리아미노산(글루탐산 등)의 함량이 증가하는 경향이 보고됩니다.",
+      papers: [
+        { title: "Characteristics of fermented seasoning sauces using <i>Tenebrio molitor</i> larvae (전통 간장 발효 원리를 응용한 곤충 유래 발효 소스 연구)", authors: "Cho, J. H., Zhao, H. L., Kim, J. S., Kim, S. H. & Chung, C. H.", year: 2018, journal: "Innovative Food Science and Emerging Technologies, 45, 186-195" }
+      ],
+      researcher: "정장호 교수 (FCS Lab Director) — 전통 장류 발효균(<i>A. oryzae</i>, <i>B. subtilis</i>)을 콩 이외의 단백질원(식용곤충 등)에 응용한 발효 소스 연구 수행. 전통 콩 간장을 직접 다룬 별도 논문은 확인되지 않아, 동일한 발효 원리를 응용한 연구를 참고 자료로 제시합니다.",
+      culture: "\"집안의 장맛\"이라는 말처럼 간장은 각 가정의 손맛과 정체성을 상징하며, 씨간장을 대물림하는 전통은 장독대 문화와 함께 이어져 왔습니다.",
+      products: "재래간장(조선간장), 양조간장, 산분해간장, 혼합간장"
+    },
+    {
+      id: "jeotgal",
+      hanja: "醢",
+      color: "var(--tidal)",
+      name: "젓갈", en: "Jeotgal",
+      tagline: "소금이 시간과 만나 감칠맛으로 완성되는 바다의 발효",
+      history: "신선한 어패류를 오래 보관하기 위해 소금에 절여 발효시키던 염장 문화에서 비롯된 한국의 대표 수산 발효식품으로, 삼국시대 이전부터 이어져 온 것으로 추정됩니다.",
+      region: "새우젓(오젓·육젓·추젓), 멸치액젓, 까나리액젓, 명란젓 등 원료와 숙성 시기에 따라 수십 가지로 분화되어 있습니다.",
+      ingredients: "어패류(멸치, 새우, 명태알 등), 소금",
+      microbes: "내염성 미생물과 어류 자체의 단백질 분해효소가 함께 작용하며, 김치·장류에서도 발견되는 내염성 유산균(<i>Tetragenococcus</i> 등)이 관여하는 것으로 보고됩니다.",
+      process: "원료 손질 → 소금 절임(염장) → 장기 숙성(수개월~수년, 자가소화 및 미생물 발효) → 액즙(액젓) 분리 또는 그대로 이용.",
+      nutrition: "유리아미노산, 핵산계 정미성분, 칼슘 등 무기질이 풍부한 고염 발효식품입니다.",
+      functionality: "숙성 기간이 길어질수록 저분자 펩타이드가 늘어나며 항산화·ACE 저해(항고혈압 관련) 생리활성이 보고된 바 있습니다.",
+      papers: [],
+      researcher: "정장호 교수 연구실(FCS Lab)에서 젓갈을 직접 다룬 논문은 RISS·KCI·DBpia 검색 결과 확인되지 않았습니다. 김치·장류로 이어지는 소금 발효 미생물 연구 라인의 연장선에서 향후 연구가 기대되는 주제입니다.",
+      culture: "김장 김치에 들어가는 멸치액젓·새우젓처럼, 젓갈은 그 자체로도 반찬이지만 다른 발효식품의 '숨은 감칠맛 재료'로도 널리 쓰입니다.",
+      products: "새우젓, 멸치액젓, 까나리액젓, 명란젓, 조미 액젓"
+    },
+    {
+      id: "sikhye",
+      hanja: "醴",
+      color: "var(--grain)",
+      name: "식혜", en: "Sikhye",
+      tagline: "엿기름이 밥알을 달콤한 발효 음료로 바꾸는 시간",
+      history: "엿기름(맥아)의 아밀라아제로 밥의 전분을 당화시켜 만드는 한국 전통 발효 음료로, 제사와 명절 상차림에 빠지지 않는 후식입니다.",
+      region: "지역에 따라 밥알을 띄우는 정도, 단맛의 강도, 생강·유자 등 부재료 사용이 달라집니다.",
+      ingredients: "밥(멥쌀), 엿기름(맥아), 물, (설탕)",
+      microbes: "전통적으로는 엿기름의 아밀라아제 효소가 핵심이지만, 정장호 교수 연구팀은 여기에 김치에서 분리한 덱스트란 생성 유산균과 막걸리(탁주) 효모를 접목해 새로운 발효형 식혜 음료를 개발했습니다.",
+      process: "엿기름물 우려내기 → 밥과 혼합해 저온 당화(50~60℃) → (연구팀의 경우) 유산균·효모 접종 발효 → 밥알 띄우기 및 냉각.",
+      nutrition: "맥아당(엿당), 포도당 등 당류와 소량의 아미노산을 함유하며, 유산균 발효를 접목할 경우 유기산과 생균 성분이 추가됩니다.",
+      functionality: "유산균과 효모를 접목한 발효 식혜는 기존 식혜보다 새로운 향미와 함께 프로바이오틱스 섭취 가능성을 더한 것으로 연구되었습니다.",
+      papers: [
+        { title: "김치에서 분리한 Dextran 생성균 및 탁주 효모를 이용한 식혜 발효음료 제조", authors: "황승환, 정장호", year: 2011, journal: "동아시아식생활학회지" }
+      ],
+      researcher: "정장호 교수 (FCS Lab Director) — 김치 유산균과 전통주 효모를 접목한 발효 음료 개발 연구 수행",
+      culture: "식혜는 설날·추석 등 명절 상차림과 제사에 올리는 대표적인 후식 음료로, 각 가정의 손맛이 드러나는 음식 중 하나입니다.",
+      products: "전통 식혜, 캔·병입 식혜 음료, 발효 유산균 식혜"
+    }
+  ];
+
+  function renderFoodGrid(filter){
+    const grid = document.getElementById('foodGrid');
+    const count = document.getElementById('dbCount');
+    if(!grid) return;
+    const q = (filter || '').trim().toLowerCase();
+    const filtered = FOODS.filter(f =>
+      f.name.toLowerCase().includes(q) || f.en.toLowerCase().includes(q)
+    );
+    count.textContent = q ? `"${filter}" 검색 결과 ${filtered.length}건` : `총 ${FOODS.length}개 음식 (목표 20~30개)`;
+
+    if(filtered.length === 0){
+      grid.innerHTML = `<div class="food-empty">검색 결과가 없습니다. 아직 구축되지 않은 음식입니다 — 자료를 주시면 추가할 수 있습니다.</div>`;
+      return;
+    }
+    grid.innerHTML = filtered.map(f => `
+      <button class="food-card" data-id="${f.id}">
+        <span class="fseal" style="background:${f.color}">${f.hanja}</span>
+        <span class="fname">${f.name}<span class="fen">${f.en}</span></span>
+        <span class="ftagline">${f.tagline}</span>
+      </button>
+    `).join('') + (q ? '' : `
+      <div class="food-placeholder">+ 다음 음식을 준비 중입니다<br>(식초, 장아찌, 수정과, 안동식혜…)</div>
+    `);
+
+    grid.querySelectorAll('.food-card').forEach(btn=>{
+      btn.addEventListener('click', ()=> openFoodDetail(btn.dataset.id));
+    });
+  }
+
+  function openFoodDetail(id){
+    const f = FOODS.find(x=>x.id===id);
+    const detail = document.getElementById('foodDetail');
+    if(!f || !detail) return;
+
+    document.querySelectorAll('.food-card').forEach(c=>{
+      c.classList.toggle('active', c.dataset.id===id);
+    });
+
+    const papersHtml = f.papers.length
+      ? f.papers.map(p=>{
+          const q2 = encodeURIComponent(p.title);
+          const scholarUrl = `https://scholar.google.com/scholar?q=${q2}`;
+          const rissUrl = `https://www.riss.kr/search/Search.do?query=${q2}`;
+          const metaLine = p.authors ? `${p.authors} · ${p.journal || ''} (${p.year})` : `${p.journal ? p.journal+' ' : ''}(${p.year})`;
+          const directLink = p.url ? `<a href="${p.url}" target="_blank" rel="noopener">원문 PDF</a> · ` : '';
+          return `<div style="margin-bottom:12px;">
+            <div style="font-weight:700;">${p.title}</div>
+            <div style="opacity:0.55;font-size:12px;margin-top:3px;">${metaLine}</div>
+            <div style="margin-top:5px;">${directLink}<a href="${scholarUrl}" target="_blank" rel="noopener">Google Scholar</a> · <a href="${rissUrl}" target="_blank" rel="noopener">RISS</a></div>
+          </div>`;
+        }).join('')
+      : `<a href="https://scholar.google.com/scholar?q=${encodeURIComponent(f.name+' 발효 연구')}" target="_blank" rel="noopener">Google Scholar에서 관련 논문 찾아보기 ↗</a>`;
+
+    detail.innerHTML = `
+      <div class="fd-head">
+        <span class="fseal" style="background:${f.color}">${f.hanja}</span>
+        <div>
+          <h3>${f.name} <span class="fen">${f.en}</span></h3>
+          <div class="fen">${f.tagline}</div>
+        </div>
+        <button class="fd-close" id="fdClose">닫기 ✕</button>
+      </div>
+      <div class="fd-grid">
+        <div class="fd-row"><div class="fd-label">역사</div><div class="fd-value">${f.history}</div></div>
+        <div class="fd-row"><div class="fd-label">지역</div><div class="fd-value">${f.region}</div></div>
+        <div class="fd-row"><div class="fd-label">재료</div><div class="fd-value">${f.ingredients}</div></div>
+        <div class="fd-row"><div class="fd-label">미생물</div><div class="fd-value">${f.microbes}</div></div>
+        <div class="fd-row wide"><div class="fd-label">발효과정</div><div class="fd-value">${f.process}</div></div>
+        <div class="fd-row"><div class="fd-label">영양성분</div><div class="fd-value">${f.nutrition}</div></div>
+        <div class="fd-row"><div class="fd-label">기능성</div><div class="fd-value">${f.functionality}</div></div>
+        <div class="fd-row"><div class="fd-label">관련 연구자</div><div class="fd-value">${f.researcher}</div></div>
+        <div class="fd-row"><div class="fd-label">관련논문</div><div class="fd-value">${papersHtml}</div></div>
+        <div class="fd-row"><div class="fd-label">관련문화</div><div class="fd-value">${f.culture}</div></div>
+        <div class="fd-row wide"><div class="fd-label">관련제품</div><div class="fd-value">${f.products}</div></div>
+      </div>
+    `;
+    detail.classList.add('open');
+    document.getElementById('fdClose').addEventListener('click', ()=>{
+      detail.classList.remove('open');
+      document.querySelectorAll('.food-card').forEach(c=>c.classList.remove('active'));
+    });
+    detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  renderFoodGrid('');
+  document.getElementById('dbSearch').addEventListener('input', (e)=>{
+    document.getElementById('foodDetail').classList.remove('open');
+    renderFoodGrid(e.target.value);
+  });
+
+  const pillars = document.querySelectorAll('.pillar');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, {threshold:0.15});
+  pillars.forEach(p=>io.observe(p));
+
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    const trigger = item.querySelector('.nav-trigger');
+    trigger.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.nav-item.open').forEach(o=>{ o.classList.remove('open'); o.querySelector('.nav-trigger').setAttribute('aria-expanded','false'); });
+      if(!isOpen){ item.classList.add('open'); trigger.setAttribute('aria-expanded','true'); }
+    });
+  });
+  document.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-item.open').forEach(o=>{ o.classList.remove('open'); o.querySelector('.nav-trigger').setAttribute('aria-expanded','false'); });
+  });
+
+  const menuToggle = document.getElementById('menuToggle');
+  const topnav = document.getElementById('topnav');
+  menuToggle.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const open = topnav.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', open);
+  });
+  topnav.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=>{ topnav.classList.remove('open'); menuToggle.setAttribute('aria-expanded','false'); });
+  });
+</script>
+
+</body>
+</html>
