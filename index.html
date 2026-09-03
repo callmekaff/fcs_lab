@@ -533,6 +533,42 @@
   .pick-link{font-size:11px;font-weight:700;letter-spacing:0.04em;opacity:0.7;border-bottom:1px solid rgba(242,238,228,0.4);padding-bottom:2px;}
   .pick-card:hover .pick-link{opacity:1;}
 
+  /* ---------- theses (advised graduate theses) ---------- */
+  .theses{background:var(--paper);}
+  .thesis-search-row{max-width:420px;margin:36px auto 0;}
+  .thesis-count{text-align:center;font-size:12px;opacity:0.5;margin-top:14px;}
+  .thesis-groups{margin-top:44px;}
+  .thesis-year-group{margin-bottom:38px;}
+  .thesis-year-header{
+    display:flex;align-items:baseline;gap:10px;
+    font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;
+    color:var(--doenjang-deep);
+    border-bottom:2px solid var(--doenjang);
+    padding-bottom:10px;margin-bottom:6px;
+  }
+  .thesis-year-header .thesis-year-count{
+    font-family:'Pretendard',sans-serif;font-size:12px;font-weight:700;
+    opacity:0.5;
+  }
+  .thesis-item{padding:16px 0;border-bottom:1px solid var(--line);}
+  .thesis-item:last-child{border-bottom:none;}
+  .thesis-title{font-family:'Noto Serif KR',serif;font-weight:700;font-size:15px;line-height:1.55;}
+  .thesis-meta{font-size:13px;opacity:0.6;margin-top:5px;}
+  .thesis-meta .thesis-author{opacity:0.9;font-weight:700;}
+  .thesis-links{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
+  .thesis-links a{
+    font-size:11px;font-weight:700;letter-spacing:0.02em;
+    padding:5px 12px;border:1px solid var(--line);border-radius:20px;
+    opacity:0.7;transition:opacity .2s,border-color .2s;
+    display:inline-flex;align-items:center;gap:5px;
+  }
+  .thesis-links a:hover{opacity:1;border-color:var(--ink);}
+  .thesis-links a.scholar::before{content:"🎓";font-size:11px;}
+  .thesis-links a.riss::before{content:"📚";font-size:11px;}
+  .thesis-links a.dcol::before{content:"🏫";font-size:11px;}
+  .thesis-empty{text-align:center;padding:50px 20px;opacity:0.5;font-size:14px;}
+  .thesis-source-note{margin-top:30px;font-size:12px;opacity:0.5;line-height:1.7;}
+
   /* ---------- footer ---------- */
   footer{
     border-top:1px solid var(--line-dark);
@@ -603,10 +639,12 @@
           <a href="#society">Society</a>
           <a href="#projects">Current Projects</a>
           <a href="#publications">Publications</a>
+          <a href="#theses">Graduate Theses</a>
         </div>
       </div>
       <a class="nav-link" href="#database">DATABASE</a>
       <a class="nav-link insight" href="#insight">FCS INSIGHT</a>
+      <a class="nav-link" href="#theses">THESES</a>
       <a class="nav-link" href="#contact">CONTACT</a>
     </nav>
   </div>
@@ -687,7 +725,7 @@
           <div class="member"><div class="avatar">연구</div><div class="mname">연구원 조O아</div><div class="mrole">박사과정</div></div>
           <div class="member"><div class="avatar">연구</div><div class="mname">연구원 명O민</div><div class="mrole">석사과정</div></div>
           <div class="member"><div class="avatar">연구</div><div class="mname">연구원 조O은</div><div class="mrole">석사과정</div></div>
-          <div class="member"><div class="avatar">연구</div><div class="mname">연구원 이O지</div><div class="mrole">석사과정</div></div>
+          <div class="member"><div class="avatar">연구</div><div class="mname">연구원 최O원</div><div class="mrole">박사과정</div></div>
         </div>
         <div class="note">구성원 프로필은 추후 실제 정보로 업데이트됩니다.</div>
       </div>
@@ -896,6 +934,29 @@
       <p>FCS Lab 밴드에 정장호 교수가 직접 공유한 기사들입니다. 음식 연구를 넘어, 지역·사회·환경까지 오간 시선의 기록입니다.</p>
     </div>
     <div class="picks-list" id="picksList"></div>
+  </div>
+</section>
+
+<!-- ===================== GRADUATE THESES ===================== -->
+<section class="theses" id="theses">
+  <div class="section-head">
+    <div class="wrap">
+      <div class="kicker">ADVISED GRADUATE THESES</div>
+      <h2>지도학생 학위논문</h2>
+      <p class="lede">2010년부터 지금까지, 정장호 교수가 지도한 세종대학교 대학원 석·박사 학위논문을 연도별로 정리했습니다.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="thesis-search-row">
+      <input type="text" class="db-search" id="thesisSearch" placeholder="논문 제목으로 검색">
+    </div>
+    <div class="thesis-count" id="thesisCount"></div>
+
+    <div class="thesis-groups" id="thesisGroups"></div>
+
+    <div class="thesis-source-note">
+      본 목록은 세종대학교 학술정보원 dCollection에서 지도교수 "정장호"로 검색한 결과를 바탕으로 정리했습니다. 학위구분(석사/박사)과 원문 PDF 링크는 추가 확인이 필요하며, 확인되는 대로 갱신할 예정입니다.
+    </div>
   </div>
 </section>
 
@@ -1499,6 +1560,115 @@
   document.getElementById('dbSearch').addEventListener('input', (e)=>{
     document.getElementById('foodDetail').classList.remove('open');
     renderFoodGrid(e.target.value);
+  });
+
+  // ---- Graduate Theses advised by 정장호 (source: Sejong University dCollection) ----
+  const THESES = [
+    { year: 2010, author: "안종성", school: "세종대학교 대학원", title: "Sous-Vide 조리법을 적용한 육류, 가금류에 관한 품질특성 :돼지삼겹살, 소등심, 오리가슴살" },
+    { year: 2010, author: "김여정", school: "세종대학교 대학원", title: "오디를 첨가한 샐러드 드레싱의 품질특성" },
+    { year: 2011, author: "유하나", school: "세종대학교 대학원", title: "연잎을 첨가한 탁주제조 및 발효 특성에 관한 연구" },
+    { year: 2011, author: "최은정", school: "세종대학교 대학원", title: "커피와 포도당액을 첨가한 양갱의 품질특성" },
+    { year: 2011, author: "이보배", school: "세종대학교 대학원", title: "전통된장을 이용한 된장분말 건조공정의 최적화" },
+    { year: 2011, author: "조성준", school: "세종대학교 일반대학원", title: "Sous-Vide 조리법을 이용한 연어에 관한 품질특성" },
+    { year: 2012, author: "안효주", school: "세종대학교 대학원", title: "김치로부터 분리된 다당 생성 유산균의 특성과 이를 이용한 쌀 요구르트의 개발" },
+    { year: 2012, author: "민경아", school: "세종대학교 대학원", title: "김치에서 분리된 다당 생성능 유산균의 probiotic starter 특성 및 요구르트 제조" },
+    { year: 2012, author: "박지희", school: "세종대학교 대학원", title: "전통누룩의 미생물 군집분석 및 탁주 제조 시 발효특성" },
+    { year: 2012, author: "유소희", school: "세종대학교 대학원", title: "커피박을 이용한 막걸리의 품질특성에 관한 연구" },
+    { year: 2013, author: "한대원", school: "세종대학교 일반대학원", title: "메밀 발효종을 첨가한 소바의 품질특성" },
+    { year: 2015, author: "정수지", school: "세종대학교 일반대학원", title: "전통누룩을 이용한 맥주제조와 품질특성" },
+    { year: 2017, author: "조주형", school: "세종대학교 대학원", title: "무와 마늘의 유기황화합물 영향에 따른 백깍두기의 발효 특성 및 미생물 생태학적 연구" },
+    { year: 2017, author: "ZHAO HUILING", school: "세종대학교 대학원", title: "식용곤충 이용 페이스트형 발효조미료 제조 및 품질특성" },
+    { year: 2018, author: "이경화", school: "세종대학교 대학원", title: "갈색거저리 분말을 첨가한 풀먼식빵의 품질특성" },
+    { year: 2018, author: "최익준", school: "세종대학교 대학원", title: "누룽지 분말과 저항전분을 첨가한 파운드케이크의 품질특성" },
+    { year: 2018, author: "김유진", school: "세종대학교 관광대학원", title: "다시마 전처리가 넙치회의 품질에 미치는 영향" },
+    { year: 2018, author: "신지은", school: "세종대학교 대학원", title: "식용곤충 발효 조미액 여과박 열수추출 최적화 및 조미소재화" },
+    { year: 2018, author: "김지수", school: "세종대학교 대학원", title: "식용곤충 액상 발효조미소재의 품질특성 및 묘사분석" },
+    { year: 2018, author: "엄혜민", school: "세종대학교 대학원", title: "콩, 렌틸콩 및 병아리콩으로 제조한 생청국장의 발효 품질 특성" },
+    { year: 2019, author: "강상훈", school: "세종대학교 대학원", title: "식용곤충 단백질 발효추출물 제조와 이를 이용한 육포 형태의 육류대체식품" },
+    { year: 2019, author: "배아영", school: "세종대학교 대학원", title: "막걸리 주박 이용제조 고추장의 품질특성" },
+    { year: 2019, author: "정하연", school: "세종대학교 대학원", title: "Carrageenan 과 Xanthangum을 첨가한 Aquafaba 이용 모짜렐라형 치즈제조" },
+    { year: 2020, author: "박혜승", school: "세종대학교 대학원", title: "전분 종류를 달리한 누에번데기 건조분말 이용 Cheese Analogue의 제조와 품질특성" },
+    { year: 2020, author: "최은희", school: "세종대학교 대학원", title: "발아흑미 분말을 이용한 고령자용 라이스 푸딩과 증편의 특성" },
+    { year: 2020, author: "장희은", school: "세종대학교 관광대학원", title: "건조숙성 저지방육의 품질특성에 관한 연구 :한우 2등급 보섭을 중심으로" },
+    { year: 2020, author: "이보배", school: "세종대학교 대학원", title: "접종균 속성 발효된장과 시판된장의 품질특성 비교연구" },
+    { year: 2021, author: "이수정", school: "세종대학교 대학원", title: "마키베리 분말을 첨가한 식빵의 품질특성" },
+    { year: 2021, author: "안영현", school: "세종대학교 대학원", title: "마늘 전처리에 따른 아이올리소스의 품질특성" },
+    { year: 2021, author: "신선미", school: "세종대학교 대학원", title: "카무트 분말 이용 마들렌의 품질특성" },
+    { year: 2021, author: "김보희", school: "세종대학교 대학원", title: "비지와 미강 이용 조미 페이스트 제조 및 품질특성" },
+    { year: 2021, author: "라윤빈", school: "세종대학교 대학원", title: "감태 분말 첨가에 따른 된장의 품질특성" },
+    { year: 2022, author: "정하나", school: "세종대학교 대학원", title: "빵효모 첨가량에 따른 이화곡 사워도우 쌀식빵의 품질특성" },
+    { year: 2022, author: "조명아", school: "세종대학교 대학원", title: "연자육분말 첨가량에 따른 증편의 품질특성" },
+    { year: 2022, author: "김소영", school: "세종대학교 대학원", title: "청국장분말을 첨가한 유자드레싱의 품질특성" },
+    { year: 2022, author: "이영순", school: "세종대학교 대학원", title: "전통식품명인 시판메주의 품질특성과 이를 이용한 고추장의 발효특성" },
+    { year: 2022, author: "권순용", school: "세종대학교 일반대학원", title: "콩의 종류를 달리한 청국장 이용 반경성 Cheese Analogue의 제조와 품질특성" },
+    { year: 2022, author: "조남철", school: "세종대학교 대학원", title: "오븐건조, 자연건조, 동결건조한 새싹보리의 품질특성과 이를 이용한 베샤멜 소스의 특성" },
+    { year: 2022, author: "제갈준미", school: "세종대학교 대학원", title: "건조방법에 따른 초석잠의 특성 비교와 이를 응용한 호박고구마 양갱의 품질 특성" },
+    { year: 2022, author: "박혜란", school: "세종대학교 대학원", title: "살균방법이 다른 시유에 케피어그레인을 첨가하여 발효 제조된 코티지 치즈의 품질특성" },
+    { year: 2022, author: "이지윤", school: "세종대학교 대학원", title: "트레할로스의 첨가량을 달리하여 제조한 쿠키의 품질 특성" },
+    { year: 2023, author: "김꽃다울", school: "세종대학교 일반대학원", title: "스테비아 분말 첨가 참외피클의 품질특성" },
+    { year: 2023, author: "강정희", school: "세종대학교 일반대학원", title: "토마토, 표고버섯, 무 단독 및 다시마 병용 젖산균발효액의 품질특성" },
+    { year: 2024, author: "홍효정", school: "세종대학교 대학원", title: "미강유와 계란 대체품을 이용한 쌀 쿠키의 품질 특성 :미강유와 달걀 대체품을 이용한 쌀 쿠키의 품질 특성" },
+    { year: 2024, author: "구수한", school: "세종대학교 관광대학원", title: "얌빈 분말을 첨가한 치아바타 빵의 품질특성" },
+    { year: 2024, author: "조민성", school: "세종대학교 대학원", title: "입국 소금을 이용한 염지 고등어의 품질특성" },
+    { year: 2024, author: "김우성", school: "세종대학교 대학원", title: "비지를 첨가한 해시 브라운의 품질특성" },
+    { year: 2024, author: "김민우", school: "세종대학교 관광대학원", title: "소금 및 다시마 분말 전처리가 연어회 품질에 미치는 영향" },
+    { year: 2024, author: "이소이", school: "세종대학교 대학원", title: "다시마 첨가량에 따른 청포묵의 품질특성" },
+    { year: 2024, author: "오병국", school: "세종대학교 대학원", title: "방울토마토 분말 첨가 매작과의 품질 특성" },
+    { year: 2025, author: "명혜민", school: "세종대학교 대학원", title: "Kefir Grains 접종 유청의 발효특성을 기반으로 한 아로니아 혼합음료의 품질특성" },
+    { year: 2025, author: "권순현", school: "세종대학교 대학원", title: "발효 참깨박 분말을 첨가한 샐러드 드레싱의 품질특성" },
+    { year: 2025, author: "박주향", school: "세종대학교 대학원", title: "가열한 아보카도 종자 분말을 첨가한 비스킷의 품질특성" },
+    { year: 2025, author: "이연서", school: "세종대학교 대학원", title: "콩류 열수추출액(Aquafaba)을 이용한 마들렌의 품질특성과 CATA기법을 이용한 소비자선호도 분석" },
+    { year: 2025, author: "이상원", school: "세종대학교 대학원", title: "라임 부산물 분말을 첨가한 가나슈의 품질 및 항산화 특성" },
+    { year: 2025, author: "박지승", school: "세종대학교 대학원", title: "메밀차 첨가비율에 따른 르방 및 바게트의 품질특성" },
+    { year: 2025, author: "심혁", school: "세종대학교 대학원", title: "입국 오일 첨가비율에 따른 마요네즈의 품질특성" },
+    { year: 2025, author: "남혜현", school: "세종대학교 대학원", title: "추출 방법에 따른 율피, 도토리박, 감과피 탄닌의 특성과 이들 물질이 가래떡의 품질특성에 미치는 영향" },
+    { year: 2025, author: "안경민", school: "세종대학교 대학원", title: "클로렐라 분말을 첨가한 바질 페스토의 품질특성" },
+    { year: 2025, author: "이진형", school: "세종대학교 대학원", title: "막걸리박 분말첨가 사워종을 이용한 Sourdough Bread 의 품질특성" }
+  ];
+
+  function renderTheses(filter){
+    const groupsEl = document.getElementById('thesisGroups');
+    const countEl = document.getElementById('thesisCount');
+    if(!groupsEl) return;
+    const q = (filter || '').trim().toLowerCase();
+    const filtered = THESES.filter(t =>
+      t.title.toLowerCase().includes(q)
+    );
+    countEl.textContent = q
+      ? `"${filter}" 검색 결과 ${filtered.length}건`
+      : `총 ${THESES.length}건 (${Math.min(...THESES.map(t=>t.year))}–${Math.max(...THESES.map(t=>t.year))})`;
+
+    if(filtered.length === 0){
+      groupsEl.innerHTML = `<div class="thesis-empty">검색 결과가 없습니다.</div>`;
+      return;
+    }
+
+    const byYear = {};
+    filtered.forEach(t=>{
+      if(!byYear[t.year]) byYear[t.year] = [];
+      byYear[t.year].push(t);
+    });
+    const years = Object.keys(byYear).map(Number).sort((a,b)=> b-a);
+
+    groupsEl.innerHTML = years.map(y=>{
+      const items = byYear[y].map(t=>{
+        return `
+        <div class="thesis-item">
+          <div class="thesis-title">${t.title}</div>
+          <div class="thesis-meta">${y}년 졸업</div>
+        </div>`;
+      }).join('');
+      return `
+        <div class="thesis-year-group">
+          <div class="thesis-year-header">${y}년 <span class="thesis-year-count">${byYear[y].length}건</span></div>
+          ${items}
+        </div>`;
+    }).join('');
+  }
+
+  renderTheses('');
+  document.getElementById('thesisSearch').addEventListener('input', (e)=>{
+    renderTheses(e.target.value);
   });
 
   const pillars = document.querySelectorAll('.pillar');
